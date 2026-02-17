@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardDescription, CardTitle } from "@/components/ui/card";
+import { siteConfig } from "@/lib/site-config";
 
 const features = [
   {
@@ -28,7 +29,7 @@ const features = [
     icon: Blocks,
     title: "shadcn/ui",
     description:
-      "20개 이상의 접근성 높은 UI 컴포넌트가 사전 구성되어 있습니다.",
+      "26개의 접근성 높은 UI 컴포넌트가 사전 구성되어 있습니다.",
   },
   {
     icon: Moon,
@@ -79,7 +80,7 @@ export default function Home() {
           </Button>
           <Button variant="outline" size="lg" asChild>
             <a
-              href="https://github.com"
+              href={siteConfig.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -134,8 +135,8 @@ export default function Home() {
             <code className="text-sm leading-loose sm:text-base">
               <span className="text-muted-foreground"># 프로젝트 클론</span>
               <br />
-              <span className="text-primary">$</span> git clone
-              https://github.com/your-repo/starter-kit.git
+              <span className="text-primary">$</span> git clone{" "}
+              {siteConfig.repoCloneUrl}
               <br />
               <span className="text-primary">$</span> cd starter-kit
               <br />

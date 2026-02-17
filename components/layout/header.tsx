@@ -1,16 +1,11 @@
-"use client";
-
 import Link from "next/link";
 import { Github } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MobileNav } from "@/components/mobile-nav";
-
-const navItems = [
-  { href: "#features", label: "기능" },
-  { href: "#getting-started", label: "시작하기" },
-];
+import { navItems } from "@/lib/nav-items";
+import { siteConfig } from "@/lib/site-config";
 
 export function Header() {
   return (
@@ -42,7 +37,7 @@ export function Header() {
           <ThemeToggle />
           <Button variant="ghost" size="icon" asChild>
             <a
-              href="https://github.com"
+              href={siteConfig.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
             >

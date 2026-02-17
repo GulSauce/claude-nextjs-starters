@@ -12,11 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-
-const navItems = [
-  { href: "#features", label: "기능" },
-  { href: "#getting-started", label: "시작하기" },
-];
+import { navItems } from "@/lib/nav-items";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);

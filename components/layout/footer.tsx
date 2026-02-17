@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 
@@ -62,9 +60,14 @@ export function Footer() {
           <p>&copy; {new Date().getFullYear()} StarterKit. All rights reserved.</p>
           <p>
             Built with{" "}
-            <Link href="https://nextjs.org" className="hover:text-foreground underline underline-offset-4">
+            <a
+              href="https://nextjs.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground underline underline-offset-4"
+            >
               Next.js
-            </Link>
+            </a>
           </p>
         </div>
       </div>
