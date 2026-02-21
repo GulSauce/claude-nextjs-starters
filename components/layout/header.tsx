@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github } from "lucide-react";
+import { Github, LogIn } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -44,6 +44,12 @@ export function Header() {
               <Github className="h-5 w-5" />
               <span className="sr-only">GitHub</span>
             </a>
+          </Button>
+          <Button variant="default" size="sm" asChild>
+            <Link href="/login">
+              <LogIn className="h-4 w-4" />
+              로그인
+            </Link>
           </Button>
         </div>
       </div>
