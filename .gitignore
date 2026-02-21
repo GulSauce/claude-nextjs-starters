@@ -41,6 +41,4 @@ yarn-error.log*
 next-env.d.ts
 
 # development tools
-.claude/
 .playwright-mcp/
-.mcp.json
