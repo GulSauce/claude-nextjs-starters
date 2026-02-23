@@ -2,211 +2,132 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> 제품 요구사항(기능 명세, 데이터 모델, 루브릭 기준)은 `docs/PRD.md` 참조.
+> 개발 계획(Phase/Task, 진행 상태)은 `docs/ROADMAP.md` 참조.
+
 ## 프로젝트 개요
 
-Next.js 16 기반 모던 웹 스타터킷. shadcn/ui 컴포넌트가 사전 구성된 프로덕션 레디 템플릿.
+→ 상세: `docs/PRD.md` > 핵심 정보
 
-## 주요 명령어
+AI 메타프롬프트의 품질을 로컬에서 자동 평가하여 점수와 개선안을 제공하는 도구 (로컬 전용, 1인 개발자 대상).
 
-```bash
-npm run dev       # 개발 서버 (http://localhost:3000)
-npm run build     # 프로덕션 빌드
-npm run start     # 빌드된 앱 실행
-npm run lint      # ESLint 실행
-```
+**현재 상태**: 스타터킷에서 MVP 구현 단계. 메인 페이지(`app/page.tsx`)는 아직 스타터킷 랜딩 페이지 상태.
 
 ## 기술 스택
 
-- **Next.js 16** (App Router) + **React 19** + **TypeScript**
-- **Tailwind CSS v4** (PostCSS 플러그인 방식, `@import "tailwindcss"`)
-- **shadcn/ui** (New York 스타일, Radix UI 기반, 21개 컴포넌트 사전 구성)
-- **next-themes** (라이트/다크/시스템 테마)
-- **react-hook-form** + **zod** + **@hookform/resolvers** (폼 + 밸리데이션)
-- **lucide-react** (아이콘), **sonner** (토스트 알림)
-- **date-fns** (날짜 유틸리티), **tw-animate-css** (애니메이션)
-- **prettier** (코드 포맷터, devDependency)
+- **프레임워크**: Next.js 16 (App Router, RSC 기본)
+- **언어**: TypeScript 5.6+
+- **UI**: React 19
+- **스타일링**: Tailwind CSS v4 (`@import "tailwindcss"`, 설정 파일 없음)
+- **컴포넌트**: shadcn/ui (New York 스타일, Radix UI 기반)
+- **아이콘**: Lucide React
+- **토스트**: sonner
+- **폼**: React Hook Form 7.x + Zod + @hookform/resolvers
+- **데이터 저장**: 로컬 JSON 파일 (Node.js fs, `data/` 디렉토리)
+- **린트**: ESLint 9 (eslint-config-next)
+- **포맷팅**: Prettier
+
+## 명령어 (Scripts)
+
+```bash
+npm run dev      # 개발 서버 실행
+npm run build    # 프로덕션 빌드
+npm run start    # 프로덕션 서버 실행
+npm run lint     # ESLint 실행
+```
 
 ## 아키텍처
 
-### 레이아웃 계층
+### 핵심 데이터 플로우
 
 ```
-app/layout.tsx (RootLayout, 서버 컴포넌트)
-  └── ThemeProvider (next-themes, "use client")
-      └── TooltipProvider (shadcn/ui)
-          ├── Header (sticky, 반응형 네비게이션)
-          ├── main.flex-1 > {children}
-          ├── Footer
-          └── Toaster (sonner)
+1. 메인 페이지: 모델 선택 + 메타프롬프트 입력 → POST /api/prompts
+2. API: data/prompts/{id}.json 저장 (status: "pending")
+3. 리다이렉트: /results/{id} (대기 상태)
+4. Claude Code: /validate 커맨드 → 루브릭 평가 → data/results/{id}.json 생성
+5. 새로고침: 결과 상세 페이지 (점수/피드백/개선 프롬프트)
 ```
 
-- HTML `lang="ko"`, `suppressHydrationWarning` (next-themes 필수)
-- 폰트: Geist Sans + Geist Mono (`next/font/google`)
+### 라우팅 구조
 
-### 디렉토리 구조
+| 경로            | 페이지          | 설명                       |
+| --------------- | --------------- | -------------------------- |
+| `/`             | 검증하기 (메인) | 프롬프트 입력 폼           |
+| `/results/[id]` | 결과 상세       | 검증 결과 표시 (대기/완료) |
+| `/history`      | 히스토리        | 이전 검증 결과 목록        |
 
-- `app/` - App Router 페이지 및 레이아웃 (서버 컴포넌트 기본)
-- `components/layout/` - Header, Footer 등 레이아웃 컴포넌트
-- `components/providers/` - ThemeProvider 등 클라이언트 컨텍스트 래퍼
-- `components/ui/` - shadcn/ui 컴포넌트 (직접 수정 가능)
-- `lib/utils.ts` - `cn()` 유틸리티 (clsx + tailwind-merge)
-- `lib/nav-items.ts` - 네비게이션 항목 정의 (`{ href, label }[]`)
-- `lib/site-config.ts` - 사이트 설정 (GitHub URL 등)
+### 루트 레이아웃 구조 (`app/layout.tsx`)
 
-### 경로 별칭
+```
+ThemeProvider → TooltipProvider → Header + main + Footer + Toaster
+```
 
-`@/*` → 프로젝트 루트 (`./`) 기준. 예: `import { Button } from "@/components/ui/button"`
+Geist Sans / Geist Mono 폰트 사용, `lang="ko"` 설정.
 
 ## 코딩 컨벤션
 
-### 서버/클라이언트 컴포넌트 분리
+### 일반 규칙
 
-- **기본은 서버 컴포넌트** (별도 지시어 없음)
-- 클라이언트 컴포넌트 필요 시 파일 최상단에 `"use client"` 명시
-- `"use client"` 필요한 경우: 이벤트 핸들러, useState/useEffect, 브라우저 API, next-themes 등
+- 변수명/함수명: 영어 (camelCase)
+- 컴포넌트명: PascalCase
+- 파일명: kebab-case (컴포넌트 파일 포함)
+- 코드 주석: 한국어
+- 경로 alias: `@/*` (프로젝트 루트 기준)
 
-### 컴포넌트 작성 패턴
+### 컴포넌트 규칙
 
-```tsx
-// 타입: React.ComponentProps<> 확장
-function MyComponent({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="my-component" // 컴포넌트 식별용
-      className={cn("기본-클래스", className)} // cn()으로 클래스 병합
-      {...props}
-    />
-  );
-}
-```
+- 서버 컴포넌트 기본, 필요 시에만 `"use client"` 사용
+- shadcn/ui 컴포넌트는 `components/ui/`에 위치, 직접 수정 금지
+- 커스텀 컴포넌트는 `components/` 직하 또는 기능별 하위 디렉토리
+- 레이아웃 컴포넌트(Header, Footer)는 `components/layout/`
 
-### CVA variant 패턴 (Button 등)
+### 스타일링 규칙
 
-```tsx
-import { cva, type VariantProps } from "class-variance-authority";
+- Tailwind CSS v4 유틸리티 클래스 사용
+- `cn()` 함수로 조건부 클래스 병합 (`lib/utils.ts`)
+- CSS 변수 기반 테마 (`globals.css`), oklch 색상 체계
 
-const myVariants = cva("기본-클래스", {
-  variants: {
-    variant: { default: "...", secondary: "..." },
-    size: { default: "...", sm: "..." },
-  },
-  defaultVariants: { variant: "default", size: "default" },
-});
+### 폼 규칙
 
-// 타입: React.ComponentProps<> & VariantProps<>
-function MyComp({
-  className,
-  variant,
-  size,
-  ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof myVariants>) {
-  return (
-    <div className={cn(myVariants({ variant, size, className }))} {...props} />
-  );
-}
-```
+- React Hook Form + Zod 스키마 조합
+- `@hookform/resolvers`로 연결
 
-### asChild / Slot 패턴
+## 환경 변수
 
-```tsx
-import { Slot } from "radix-ui";
-const Comp = asChild ? Slot.Root : "button";
-```
+현재 환경 변수 없음 (로컬 전용 도구).
 
-## 스타일링 규칙
+## 개발 도구 및 설정
 
-### Tailwind CSS v4 주의사항
+- **패키지 매니저**: npm
+- **Node.js**: 20+
+- **shadcn CLI**: `npx shadcn@latest add <component>` (컴포넌트 추가)
+- **Prettier**: 코드 포맷팅
 
-- **`tailwind.config.js` 미사용** — 모든 테마 설정은 `globals.css`의 `@theme inline {}` 블록에서 정의
-- `@import "tailwindcss"` + `@import "tw-animate-css"` + `@import "shadcn/tailwind.css"`
-- 다크모드: `@custom-variant dark (&:is(.dark *))` — 클래스 기반
+---
 
-### OKLCH 색상 체계
+## 문서 연동 규칙
 
-`globals.css`의 `:root` / `.dark`에 CSS 변수로 정의. 주요 의미론적 변수:
+프로젝트 문서는 4개 파일로 구성되며, 코드 변경 시 아래 테이블에 따라 관련 문서를 **반드시 함께 갱신**해야 합니다.
 
-| 변수                                     | 용도                |
-| ---------------------------------------- | ------------------- |
-| `--background` / `--foreground`          | 페이지 배경/텍스트  |
-| `--primary` / `--primary-foreground`     | 주요 액션 (버튼 등) |
-| `--secondary` / `--secondary-foreground` | 보조 액션           |
-| `--muted` / `--muted-foreground`         | 비활성/보조 텍스트  |
-| `--accent` / `--accent-foreground`       | 강조 (hover 등)     |
-| `--destructive`                          | 삭제/에러 액션      |
-| `--border`, `--input`, `--ring`          | 테두리/입력/포커스  |
-| `--card` / `--popover`                   | 카드/팝오버 배경    |
+### 문서별 소유 범위
 
-Tailwind에서 사용: `bg-primary`, `text-muted-foreground`, `border-border` 등
+| 문서              | 진실의 원천                                     | 자동 로드              |
+| ----------------- | ----------------------------------------------- | ---------------------- |
+| `CLAUDE.md`       | 기술 스택, 명령어, 아키텍처, 코딩 컨벤션        | O (매 세션)            |
+| `docs/PRD.md`     | 기능 명세, 데이터 모델, 루브릭 기준, 등급 기준  | X (필요 시 읽기)       |
+| `docs/ROADMAP.md` | Phase/Task 계획, 진행 상태, 작업 워크플로우     | X (필요 시 읽기)       |
+| `shrimp-rules.md` | AI 의사결정 기준, 금지 사항, 파일 상호작용 규칙 | X (Shrimp MCP 호출 시) |
 
-### 반응형 브레이크포인트
+### 변경 → 문서 갱신 트리거
 
-`sm:640px`, `md:768px`, `lg:1024px`, `xl:1280px`, `2xl:1536px` (Tailwind 기본값)
-
-## 사용 가능한 shadcn/ui 컴포넌트
-
-21개 파일이 `components/ui/`에 설치됨:
-
-alert, alert-dialog, avatar, badge, button, card, checkbox, dialog, dropdown-menu, form, input, label, select, separator, sheet, skeleton, sonner, switch, tabs, textarea, tooltip
-
-추가 설치: `npx shadcn@latest add [component-name]` (설정: `components.json`)
-
-## 주요 개발 패턴
-
-### 새 페이지 추가
-
-```
-app/새경로/page.tsx    // 서버 컴포넌트 (기본)
-```
-
-네비게이션에 추가하려면 `lib/nav-items.ts`의 `navItems` 배열에 항목 추가.
-
-### 폼 작성 패턴
-
-```tsx
-"use client";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-
-const schema = z.object({ name: z.string().min(1, "필수 입력") });
-
-function MyForm() {
-  const form = useForm({ resolver: zodResolver(schema) });
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>이름</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">제출</Button>
-      </form>
-    </Form>
-  );
-}
-```
-
-## 주의사항
-
-- `html` 태그의 `suppressHydrationWarning`은 next-themes 필수 — 제거 금지
-- shadcn/ui 컴포넌트 직접 수정 가능하나 `data-slot` 속성 패턴 유지
-- `radix-ui` 패키지에서 직접 import (`@radix-ui/*` 아닌 `radix-ui`)
+| 코드 변경                       | 갱신할 문서                   |
+| ------------------------------- | ----------------------------- |
+| `package.json` 패키지 추가/삭제 | `CLAUDE.md` (기술 스택)       |
+| `package.json` scripts 변경     | `CLAUDE.md` (명령어)          |
+| `app/` 라우트 추가/삭제         | `CLAUDE.md` (라우팅 구조)     |
+| `lib/types.ts` 데이터 모델 변경 | `docs/PRD.md` (데이터 모델)   |
+| `lib/rubrics.ts` 루브릭 변경    | `docs/PRD.md` (루브릭 기준)   |
+| Task 완료                       | `docs/ROADMAP.md` (완료 표시) |
+| 새 Task 추가                    | `docs/ROADMAP.md` (Task 삽입) |
+| 금지 사항/의사결정 규칙 변경    | `shrimp-rules.md`             |
+| 파일 상호작용 규칙 변경         | `shrimp-rules.md`             |
