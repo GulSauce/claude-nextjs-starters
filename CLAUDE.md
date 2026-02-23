@@ -42,7 +42,7 @@ npm run lint     # ESLint 실행
 
 ```
 1. 메인 페이지: 모델 선택 + 메타프롬프트 입력 → POST /api/prompts
-2. API: data/prompts/{id}.json 저장 (status: "pending")
+2. API: data/prompts/pending/{id}.json 저장
 3. 리다이렉트: /results/{id} (대기 상태)
 4. Claude Code: /validate 커맨드 → 루브릭 평가 → data/results/{id}.json 생성
 5. 새로고침: 결과 상세 페이지 (점수/피드백/개선 프롬프트)
@@ -62,7 +62,7 @@ npm run lint     # ESLint 실행
 ### /validate 슬래시 커맨드
 
 `.claude/commands/validate.md`에 정의된 Claude Code 커맨드.
-`data/prompts/`에서 `status: "pending"` 프롬프트를 찾아 7개 루브릭 기준으로 평가하고 `data/results/{id}.json`에 결과를 저장한다.
+`data/prompts/pending/`의 프롬프트를 6개 루브릭 기준으로 평가하고, 결과를 `data/results/{id}.json`에 저장하며, 완료된 프롬프트를 `data/prompts/complete/`로 이동한다.
 
 ### 디렉토리 구조
 
@@ -89,7 +89,8 @@ lib/
   rubrics.ts                    # 루브릭 기준 + 등급 계산
   data.ts                       # 파일시스템 CRUD
 data/
-  prompts/{id}.json             # 프롬프트 데이터 (.gitignore)
+  prompts/pending/{id}.json     # 대기 중 프롬프트 (.gitignore)
+  prompts/complete/{id}.json    # 검증 완료 프롬프트 (.gitignore)
   results/{id}.json             # 검증 결과 데이터 (.gitignore)
 ```
 

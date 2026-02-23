@@ -11,6 +11,8 @@ import type {
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const PROMPTS_DIR = path.join(DATA_DIR, "prompts");
+const PENDING_DIR = path.join(PROMPTS_DIR, "pending");
+const COMPLETE_DIR = path.join(PROMPTS_DIR, "complete");
 const RESULTS_DIR = path.join(DATA_DIR, "results");
 
 /** 디렉토리 존재 확인 및 생성 */
@@ -31,26 +33,27 @@ export async function savePrompt(input: {
     status: "pending",
   };
 
-  await ensureDir(PROMPTS_DIR);
+  await ensureDir(PENDING_DIR);
   await fs.writeFile(
-    path.join(PROMPTS_DIR, `${prompt.id}.json`),
+    path.join(PENDING_DIR, `${prompt.id}.json`),
     JSON.stringify(prompt, null, 2),
   );
 
   return prompt;
 }
 
-/** 프롬프트 조회 */
+/** 프롬프트 조회 (pending → complete 순서로 탐색) */
 export async function getPrompt(id: string): Promise<PromptInput | null> {
-  try {
-    const data = await fs.readFile(
-      path.join(PROMPTS_DIR, `${id}.json`),
-      "utf-8",
-    );
-    return JSON.parse(data) as PromptInput;
-  } catch {
-    return null;
+  const fileName = `${id}.json`;
+  for (const dir of [PENDING_DIR, COMPLETE_DIR]) {
+    try {
+      const data = await fs.readFile(path.join(dir, fileName), "utf-8");
+      return JSON.parse(data) as PromptInput;
+    } catch {
+      // 해당 디렉토리에 없으면 다음 디렉토리 탐색
+    }
   }
+  return null;
 }
 
 /** 검증 결과 조회 */
@@ -87,7 +90,7 @@ export async function getAllResults(): Promise<ValidationResult[]> {
   );
 }
 
-/** 프롬프트 상태 업데이트 */
+/** 프롬프트 상태 업데이트 (validated 시 pending → complete로 파일 이동) */
 export async function updatePromptStatus(
   id: string,
   status: PromptStatus,
@@ -98,8 +101,21 @@ export async function updatePromptStatus(
   }
 
   const updated: PromptInput = { ...prompt, status };
-  await fs.writeFile(
-    path.join(PROMPTS_DIR, `${id}.json`),
-    JSON.stringify(updated, null, 2),
-  );
+  const fileName = `${id}.json`;
+
+  if (status === "validated") {
+    await ensureDir(COMPLETE_DIR);
+    await fs.writeFile(
+      path.join(COMPLETE_DIR, fileName),
+      JSON.stringify(updated, null, 2),
+    );
+    // pending 디렉토리에서 삭제 (없어도 무시)
+    await fs.unlink(path.join(PENDING_DIR, fileName)).catch(() => {});
+  } else {
+    await ensureDir(PENDING_DIR);
+    await fs.writeFile(
+      path.join(PENDING_DIR, fileName),
+      JSON.stringify(updated, null, 2),
+    );
+  }
 }

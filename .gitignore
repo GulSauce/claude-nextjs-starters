@@ -44,5 +44,5 @@ next-env.d.ts
 .playwright-mcp/
 
 # 데이터 파일 (JSON)
-data/prompts/*.json
+data/prompts/**/*.json
 data/results/*.json
