@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 AI 메타프롬프트의 품질을 로컬에서 자동 평가하여 점수와 개선안을 제공하는 도구 (로컬 전용, 1인 개발자 대상).
 
-**현재 상태**: 스타터킷에서 MVP 구현 단계. 메인 페이지(`app/page.tsx`)는 아직 스타터킷 랜딩 페이지 상태.
+**현재 상태**: MVP 구현 완료. 프롬프트 입력 → API 저장 → /validate 커맨드 평가 → 결과 조회 전체 플로우 동작.
 
 ## 기술 스택
 
@@ -50,11 +50,48 @@ npm run lint     # ESLint 실행
 
 ### 라우팅 구조
 
-| 경로            | 페이지          | 설명                       |
-| --------------- | --------------- | -------------------------- |
-| `/`             | 검증하기 (메인) | 프롬프트 입력 폼           |
-| `/results/[id]` | 결과 상세       | 검증 결과 표시 (대기/완료) |
-| `/history`      | 히스토리        | 이전 검증 결과 목록        |
+| 경로                       | 유형 | 설명                       |
+| -------------------------- | ---- | -------------------------- |
+| `/`                        | 정적 | 프롬프트 입력 폼           |
+| `/results/[id]`            | 동적 | 검증 결과 표시 (대기/완료) |
+| `/history`                 | 정적 | 이전 검증 결과 목록        |
+| `/api/prompts`             | API  | POST: 프롬프트 저장        |
+| `/api/results/[id]`        | API  | GET: 검증 결과 조회        |
+| `/api/prompts/[id]/status` | API  | GET: 프롬프트 상태 조회    |
+
+### /validate 슬래시 커맨드
+
+`.claude/commands/validate.md`에 정의된 Claude Code 커맨드.
+`data/prompts/`에서 `status: "pending"` 프롬프트를 찾아 7개 루브릭 기준으로 평가하고 `data/results/{id}.json`에 결과를 저장한다.
+
+### 디렉토리 구조
+
+```
+app/
+  api/prompts/route.ts          # POST 프롬프트 저장
+  api/prompts/[id]/status/      # GET 상태 조회
+  api/results/[id]/route.ts     # GET 결과 조회
+  results/[id]/page.tsx         # 결과 상세 페이지
+  history/page.tsx              # 히스토리 페이지
+  page.tsx                      # 메인 (검증하기)
+components/
+  layout/header.tsx, footer.tsx # 레이아웃
+  ui/                           # shadcn/ui (수정 금지)
+  prompt-validator-form.tsx     # 폼 (use client)
+  validation-result.tsx         # 결과 탭 (use client)
+  validation-pending.tsx        # 대기 상태
+  score-badge.tsx               # 등급 뱃지
+  rubric-score-card.tsx         # 루브릭 점수 카드
+  history-card.tsx              # 히스토리 카드
+lib/
+  types.ts                      # 핵심 타입 정의
+  schemas.ts                    # Zod 폼 검증 스키마
+  rubrics.ts                    # 루브릭 기준 + 등급 계산
+  data.ts                       # 파일시스템 CRUD
+data/
+  prompts/{id}.json             # 프롬프트 데이터 (.gitignore)
+  results/{id}.json             # 검증 결과 데이터 (.gitignore)
+```
 
 ### 루트 레이아웃 구조 (`app/layout.tsx`)
 
