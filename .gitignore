@@ -46,3 +46,4 @@ next-env.d.ts
 # 데이터 파일 (JSON)
 data/prompts/**/*.json
 data/results/*.json
+data/temp/*.json

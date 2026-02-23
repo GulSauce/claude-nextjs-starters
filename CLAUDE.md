@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 AI 메타프롬프트의 품질을 로컬에서 자동 평가하여 점수와 개선안을 제공하는 도구 (로컬 전용, 1인 개발자 대상).
 
-**현재 상태**: MVP 구현 완료. 프롬프트 입력 → API 저장 → /validate 커맨드 평가 → 결과 조회 전체 플로우 동작.
+**현재 상태**: Phase 5 구현 완료. 듀얼 에이전트 토론 기반 평가 시스템 (프롬프트 엔지니어 + 교육 평가 전문가 → 교차 검토 → 합의 도출) 동작.
 
 ## 기술 스택
 
@@ -44,8 +44,12 @@ npm run lint     # ESLint 실행
 1. 메인 페이지: 모델 선택 + 메타프롬프트 입력 → POST /api/prompts
 2. API: data/prompts/pending/{id}.json 저장
 3. 리다이렉트: /results/{id} (대기 상태)
-4. Claude Code: /validate 커맨드 → 루브릭 평가 → data/results/{id}.json 생성
-5. 새로고침: 결과 상세 페이지 (점수/피드백/개선 프롬프트)
+4. Claude Code: /validate 커맨드 → 듀얼 에이전트 토론 평가
+   Phase 1: Agent A(프롬프트 엔지니어) + Agent B(교육 평가 전문가) 병렬 독립 평가
+   Phase 2: 교차 검토 (서로의 평가 결과를 검토)
+   Phase 3: 합의 조정자가 최종 점수/피드백 결정
+   → data/results/{id}.json 생성 (evaluationMode: "debate")
+5. 새로고침: 결과 상세 페이지 (합의 결과/에이전트별 평가/토론 로그/개선 프롬프트/원본)
 ```
 
 ### 라우팅 구조
@@ -62,7 +66,9 @@ npm run lint     # ESLint 실행
 ### /validate 슬래시 커맨드
 
 `.claude/commands/validate.md`에 정의된 Claude Code 커맨드.
-`data/prompts/pending/`의 프롬프트를 6개 루브릭 기준으로 평가하고, 결과를 `data/results/{id}.json`에 저장하며, 완료된 프롬프트를 `data/prompts/complete/`로 이동한다.
+듀얼 에이전트 토론 모드로 `data/prompts/pending/`의 프롬프트를 평가한다.
+Agent A(프롬프트 엔지니어) + Agent B(교육 평가 전문가)가 병렬 독립 평가 → 교차 검토 → 합의 조정자가 최종 결정.
+결과를 `data/results/{id}.json`에 저장하며, 완료된 프롬프트를 `data/prompts/complete/`로 이동한다.
 
 ### 디렉토리 구조
 
@@ -78,13 +84,22 @@ components/
   layout/header.tsx, footer.tsx # 레이아웃
   ui/                           # shadcn/ui (수정 금지)
   prompt-validator-form.tsx     # 폼 (use client)
-  validation-result.tsx         # 결과 탭 (use client)
+  validation-result.tsx         # 결과 탭 - single/debate 분기 (use client)
   validation-pending.tsx        # 대기 상태
   score-badge.tsx               # 등급 뱃지
-  rubric-score-card.tsx         # 루브릭 점수 카드
-  history-card.tsx              # 히스토리 카드
+  rubric-score-card.tsx         # 루브릭 점수 카드 (compact 모드 지원)
+  history-card.tsx              # 히스토리 카드 (evaluationMode 뱃지)
+  consensus-score-card.tsx      # 합의 결과 카드 (debate 모드)
+  debate-log.tsx                # 토론 로그 채팅 UI (debate 모드)
+  agent-evaluation-panel.tsx    # 에이전트별 평가 패널 (debate 모드)
+.claude/
+  agents/docs/
+    quiz-prompt-evaluator.md    # 공통 평가 기준
+    prompt-engineer-evaluator.md # Agent A: 프롬프트 엔지니어링 관점
+    education-evaluator.md      # Agent B: 교육 평가 전문가 관점
+    consensus-moderator.md      # 합의 조정자 가이드
 lib/
-  types.ts                      # 핵심 타입 정의
+  types.ts                      # 핵심 타입 정의 (듀얼 에이전트 타입 포함)
   schemas.ts                    # Zod 폼 검증 스키마
   rubrics.ts                    # 루브릭 기준 + 등급 계산
   data.ts                       # 파일시스템 CRUD
@@ -92,6 +107,7 @@ data/
   prompts/pending/{id}.json     # 대기 중 프롬프트 (.gitignore)
   prompts/complete/{id}.json    # 검증 완료 프롬프트 (.gitignore)
   results/{id}.json             # 검증 결과 데이터 (.gitignore)
+  temp/{파일}.json              # 토론 중간 임시 파일 (.gitignore)
 ```
 
 ### 루트 레이아웃 구조 (`app/layout.tsx`)
@@ -140,6 +156,28 @@ Geist Sans / Geist Mono 폰트 사용, `lang="ko"` 설정.
 - **Node.js**: 20+
 - **shadcn CLI**: `npx shadcn@latest add <component>` (컴포넌트 추가)
 - **Prettier**: 코드 포맷팅
+
+## 전용 에이전트 사용 규칙
+
+작업 유형에 따라 반드시 해당 전용 에이전트(Task tool의 subagent_type)를 사용해야 합니다.
+
+| 작업 유형                      | 전용 에이전트          | 비고                               |
+| ------------------------------ | ---------------------- | ---------------------------------- |
+| UI 컴포넌트 생성/수정 (마크업) | `ui-markup-specialist` | Tailwind + shadcn/ui 스타일링 전담 |
+| 코드 구현 후 리뷰              | `code-reviewer`        | 구현 완료 후 자동 실행 권장        |
+| PRD 작성                       | `prd-generator`        | 새 기능 요구사항 정리 시           |
+| ROADMAP.md 갱신                | `development-planner`  | Task 완료/추가 시                  |
+| 코드베이스 탐색                | `Explore`              | 3회 이상 검색이 필요한 탐색 작업   |
+| 구현 계획 수립                 | `Plan`                 | 아키텍처 결정이 필요한 작업        |
+| Git 커밋                       | `/commit` 스킬 사용    | Skill tool로 호출                  |
+| 프롬프트 검증                  | `/validate` 스킬 사용  | Skill tool로 호출                  |
+
+### 에이전트 사용 원칙
+
+- 독립적인 작업은 **병렬로** 여러 에이전트를 동시 실행한다.
+- UI 마크업 변경은 직접 수행하지 않고 반드시 `ui-markup-specialist`에 위임한다.
+- 코드 구현이 완료되면 `code-reviewer`를 실행하여 품질을 검증한다.
+- 단순 파일 읽기/검색은 에이전트 없이 Glob, Grep, Read 도구를 직접 사용한다.
 
 ---
 

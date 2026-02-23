@@ -2,6 +2,7 @@
 
 > 프로젝트 개요 및 기능 명세는 `docs/PRD.md` 참조.
 > 기술 스택 및 아키텍처는 `CLAUDE.md` 참조.
+> 신규 개발 계획(Phase 5~)은 `docs/ROADMAP_v2.md` 참조.
 
 ## 개발 워크플로우
 
