@@ -19,9 +19,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Next.js 모던 웹 스타터킷",
+  title: "퀴즈 프롬프트 검증기",
   description:
-    "Next.js 16, React 19, Tailwind CSS v4, shadcn/ui로 구성된 프로덕션 레디 스타터킷",
+    "AI 메타프롬프트의 품질을 자동 평가하여 점수와 개선안을 제공하는 도구",
 };
 
 export default function RootLayout({

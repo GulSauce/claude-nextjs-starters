@@ -1,4 +1,4 @@
 export const navItems = [
-  { href: "#features", label: "기능" },
-  { href: "#getting-started", label: "시작하기" },
+  { href: "/", label: "검증하기" },
+  { href: "/history", label: "히스토리" },
 ];

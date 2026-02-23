@@ -1,11 +1,8 @@
 import Link from "next/link";
-import { Github, LogIn } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { MobileNav } from "@/components/mobile-nav";
 import { navItems } from "@/lib/nav-items";
-import { siteConfig } from "@/lib/site-config";
 
 export function Header() {
   return (
@@ -15,7 +12,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           <MobileNav />
           <Link href="/" className="text-xl font-bold tracking-tight">
-            Starter<span className="text-primary/60">Kit</span>
+            프롬프트 <span className="text-primary/60">검증기</span>
           </Link>
         </div>
 
@@ -35,22 +32,6 @@ export function Header() {
         {/* 액션 버튼 */}
         <div className="flex items-center gap-1">
           <ThemeToggle />
-          <Button variant="ghost" size="icon" asChild>
-            <a
-              href={siteConfig.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Github className="h-5 w-5" />
-              <span className="sr-only">GitHub</span>
-            </a>
-          </Button>
-          <Button variant="default" size="sm" asChild>
-            <Link href="/login">
-              <LogIn className="h-4 w-4" />
-              로그인
-            </Link>
-          </Button>
         </div>
       </div>
     </header>
