@@ -48,6 +48,12 @@ export interface ValidationResult {
   overallFeedback: string;
   improvedPrompt: string;
   validatedAt: string;
+  // 듀얼 에이전트 토론 평가 확장 (하위 호환)
+  evaluationMode?: EvaluationMode;
+  agentEvaluations?: AgentEvaluation[];
+  debateRounds?: DebateRound[];
+  debateLog?: DebateMessage[];
+  consensusSummary?: string;
 }
 
 /** 루브릭 기준 정의 */
@@ -56,4 +62,58 @@ export interface RubricCriterion {
   name: string;
   maxScore: number;
   description: string;
+}
+
+// ─── 듀얼 에이전트 토론 평가 관련 타입 ───
+
+/** 에이전트 역할 */
+export type AgentRole =
+  | "prompt-engineer"
+  | "education-evaluator"
+  | "consensus-moderator";
+
+/** 평가 모드 */
+export type EvaluationMode = "single" | "debate";
+
+/** 토론 단계 */
+export type DebatePhase =
+  | "independent-evaluation"
+  | "cross-review"
+  | "consensus";
+
+/** 토론 메시지 */
+export interface DebateMessage {
+  agent: string;
+  role: AgentRole;
+  phase: DebatePhase;
+  content: string;
+  timestamp: string;
+}
+
+/** 에이전트별 개별 평가 결과 */
+export interface AgentEvaluation {
+  agentRole: AgentRole;
+  rubricScores: RubricScore[];
+  totalScore: number;
+  grade: Grade;
+  overallFeedback: string;
+  improvedPrompt: string;
+}
+
+/** 교차 검토 코멘트 */
+export interface CrossReviewComment {
+  reviewerRole: AgentRole;
+  targetRole: AgentRole;
+  criterionId: CriterionId;
+  originalScore: number;
+  suggestedScore: number;
+  comment: string;
+}
+
+/** 토론 라운드 */
+export interface DebateRound {
+  phase: DebatePhase;
+  messages: DebateMessage[];
+  startedAt: string;
+  completedAt: string;
 }
