@@ -93,11 +93,14 @@ components/
   debate-log.tsx                # 토론 로그 채팅 UI (debate 모드)
   agent-evaluation-panel.tsx    # 에이전트별 평가 패널 (debate 모드)
 .claude/
-  agents/docs/
+  agents/evaluators/
     quiz-prompt-evaluator.md    # 공통 평가 기준
     prompt-engineer-evaluator.md # Agent A: 프롬프트 엔지니어링 관점
     education-evaluator.md      # Agent B: 교육 평가 전문가 관점
     consensus-moderator.md      # 합의 조정자 가이드
+  agents/docs/
+    prd-generator.md            # PRD 생성 에이전트
+    notion-api-database-expert.md # Notion API 에이전트
 lib/
   types.ts                      # 핵심 타입 정의 (듀얼 에이전트 타입 포함)
   schemas.ts                    # Zod 폼 검증 스키마

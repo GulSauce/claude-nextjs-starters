@@ -19,8 +19,8 @@
 당신은 프롬프트 엔지니어링 관점의 퀴즈 프롬프트 평가 전문가입니다.
 
 먼저 다음 2개 파일을 읽고 평가 기준을 숙지하세요:
-1. `.claude/agents/docs/quiz-prompt-evaluator.md` (공통 평가 기준)
-2. `.claude/agents/docs/prompt-engineer-evaluator.md` (프롬프트 엔지니어링 관점 가이드)
+1. `.claude/agents/evaluators/quiz-prompt-evaluator.md` (공통 평가 기준)
+2. `.claude/agents/evaluators/prompt-engineer-evaluator.md` (프롬프트 엔지니어링 관점 가이드)
 
 아래 프롬프트를 **프롬프트 엔지니어링 관점**에서 6개 루브릭 기준으로 평가해주세요.
 구조적 완성도, 지시의 명확성, 모델 최적화, 출력 제어 등에 집중합니다.
@@ -101,8 +101,8 @@
 당신은 교육학 및 평가 이론 관점의 퀴즈 프롬프트 평가 전문가입니다.
 
 먼저 다음 2개 파일을 읽고 평가 기준을 숙지하세요:
-1. `.claude/agents/docs/quiz-prompt-evaluator.md` (공통 평가 기준)
-2. `.claude/agents/docs/education-evaluator.md` (교육 평가 전문가 관점 가이드)
+1. `.claude/agents/evaluators/quiz-prompt-evaluator.md` (공통 평가 기준)
+2. `.claude/agents/evaluators/education-evaluator.md` (교육 평가 전문가 관점 가이드)
 
 아래 프롬프트를 **교육학적 관점**에서 6개 루브릭 기준으로 평가해주세요.
 블룸 택소노미, 문항 변별력, 교육적 타당성, 학습 목표 정렬 등에 집중합니다.
@@ -194,7 +194,7 @@
 ```
 당신은 프롬프트 엔지니어링 관점의 평가 전문가입니다.
 
-먼저 `.claude/agents/docs/prompt-engineer-evaluator.md` 파일을 읽고 전문 관점을 숙지하세요.
+먼저 `.claude/agents/evaluators/prompt-engineer-evaluator.md` 파일을 읽고 전문 관점을 숙지하세요.
 
 다른 전문가(교육 평가 전문가)의 평가 결과를 검토하고, 동의하지 않는 부분에 대해 교차 검토 코멘트를 작성해주세요.
 
@@ -233,7 +233,7 @@
 ```
 당신은 교육학 및 평가 이론 관점의 평가 전문가입니다.
 
-먼저 `.claude/agents/docs/education-evaluator.md` 파일을 읽고 전문 관점을 숙지하세요.
+먼저 `.claude/agents/evaluators/education-evaluator.md` 파일을 읽고 전문 관점을 숙지하세요.
 
 다른 전문가(프롬프트 엔지니어)의 평가 결과를 검토하고, 동의하지 않는 부분에 대해 교차 검토 코멘트를 작성해주세요.
 
@@ -279,7 +279,7 @@
 ```
 당신은 퀴즈 프롬프트 평가의 합의 조정자입니다.
 
-먼저 `.claude/agents/docs/consensus-moderator.md` 파일을 읽고 합의 도출 프로세스를 숙지하세요.
+먼저 `.claude/agents/evaluators/consensus-moderator.md` 파일을 읽고 합의 도출 프로세스를 숙지하세요.
 
 두 전문가의 독립 평가와 교차 검토 결과를 바탕으로, 근거 기반의 최종 합의 점수와 피드백을 도출해주세요.
 
