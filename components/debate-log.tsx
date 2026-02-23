@@ -31,6 +31,7 @@ const ROLE_LABEL: Record<AgentRole, string> = {
 const PHASE_LABEL: Record<DebatePhase, string> = {
   "independent-evaluation": "Phase 1: 독립 평가",
   "cross-review": "Phase 2: 교차 검토",
+  "prompt-cross-review": "Phase 2.5: 개선 프롬프트 교차 검토",
   consensus: "Phase 3: 합의 도출",
 };
 
@@ -38,6 +39,7 @@ const PHASE_LABEL: Record<DebatePhase, string> = {
 const PHASE_ORDER: DebatePhase[] = [
   "independent-evaluation",
   "cross-review",
+  "prompt-cross-review",
   "consensus",
 ];
 

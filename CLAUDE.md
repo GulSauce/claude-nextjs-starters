@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 AI 메타프롬프트의 품질을 로컬에서 자동 평가하여 점수와 개선안을 제공하는 도구 (로컬 전용, 1인 개발자 대상).
 
-**현재 상태**: Phase 5 구현 완료. 듀얼 에이전트 토론 기반 평가 시스템 (프롬프트 엔지니어 + 교육 평가 전문가 → 교차 검토 → 합의 도출) 동작.
+**현재 상태**: Phase 6 구현 완료. 듀얼 에이전트 토론 기반 평가 시스템 (프롬프트 엔지니어 + 교육 평가 전문가 → 교차 검토 → 개선 프롬프트 교차 검토 → 합의 도출) 동작.
 
 ## 기술 스택
 
@@ -47,6 +47,7 @@ npm run lint     # ESLint 실행
 4. Claude Code: /validate 커맨드 → 듀얼 에이전트 토론 평가
    Phase 1: Agent A(프롬프트 엔지니어) + Agent B(교육 평가 전문가) 병렬 독립 평가
    Phase 2: 교차 검토 (서로의 평가 결과를 검토)
+   Phase 2.5: 개선 프롬프트 교차 검토 (서로의 improvedPrompt를 검토)
    Phase 3: 합의 조정자가 최종 점수/피드백 결정
    → data/results/{id}.json 생성 (evaluationMode: "debate")
 5. 새로고침: 결과 상세 페이지 (합의 결과/에이전트별 평가/토론 로그/개선 프롬프트/원본)
@@ -67,7 +68,7 @@ npm run lint     # ESLint 실행
 
 `.claude/commands/validate.md`에 정의된 Claude Code 커맨드.
 듀얼 에이전트 토론 모드로 `data/prompts/pending/`의 프롬프트를 평가한다.
-Agent A(프롬프트 엔지니어) + Agent B(교육 평가 전문가)가 병렬 독립 평가 → 교차 검토 → 합의 조정자가 최종 결정.
+Agent A(프롬프트 엔지니어) + Agent B(교육 평가 전문가)가 병렬 독립 평가 → 교차 검토 → 개선 프롬프트 교차 검토 → 합의 조정자가 최종 결정.
 결과를 `data/results/{id}.json`에 저장하며, 완료된 프롬프트를 `data/prompts/complete/`로 이동한다.
 
 ### 디렉토리 구조

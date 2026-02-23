@@ -1,6 +1,6 @@
 # /validate - 퀴즈 메타프롬프트 검증 커맨드 (듀얼 에이전트 토론 모드)
 
-`data/prompts/pending/` 디렉토리의 프롬프트를 찾아 2개 전문 에이전트의 독립 평가 → 교차 검토 → 합의 도출 토론 프로세스를 통해 평가하고 결과를 저장합니다.
+`data/prompts/pending/` 디렉토리의 프롬프트를 찾아 2개 전문 에이전트의 독립 평가 → 교차 검토 → 개선 프롬프트 교차 검토 → 합의 도출 토론 프로세스를 통해 평가하고 결과를 저장합니다.
 
 ## 실행 절차
 
@@ -272,7 +272,81 @@
 - `data/temp/cross-review-a-{프롬프트ID}.json`과 `data/temp/cross-review-b-{프롬프트ID}.json`을 읽습니다
 - Phase 2 debateLog 메시지를 기록합니다
 
-### 6. Phase 3 - 합의 도출
+### 6. Phase 2.5 - 개선 프롬프트 병렬 교차 검토
+
+두 에이전트를 **병렬로** 호출합니다. 각 에이전트가 상대방의 `improvedPrompt`를 자신의 전문 관점에서 검토합니다.
+
+#### Agent A가 Agent B의 개선 프롬프트 검토
+
+```
+당신은 프롬프트 엔지니어링 관점의 평가 전문가입니다.
+
+먼저 `.claude/agents/evaluators/prompt-engineer-evaluator.md` 파일을 읽고 전문 관점을 숙지하세요.
+
+다른 전문가(교육 평가 전문가)가 작성한 개선 프롬프트를 프롬프트 엔지니어링 관점에서 검토해주세요.
+구조적 완성도, 지시의 명확성, 모델 최적화, 출력 제어 측면에서 강점, 약점, 개선안을 제시합니다.
+
+**원본 프롬프트:**
+{프롬프트의 promptText}
+
+**교육 평가 전문가의 개선 프롬프트:**
+{data/temp/agent-b-{프롬프트ID}.json의 improvedPrompt}
+
+## 검토 결과 형식
+
+결과를 `data/temp/prompt-review-a-{프롬프트ID}.json` 파일에 저장하세요:
+
+{
+  "reviewerRole": "prompt-engineer",
+  "targetRole": "education-evaluator",
+  "strengths": ["강점 1", "강점 2", ...],
+  "weaknesses": ["약점 1", "약점 2", ...],
+  "suggestions": ["개선안 1", "개선안 2", ...],
+  "mustIncludeElements": ["필수 포함 요소 1", "필수 포함 요소 2", ...]
+}
+
+각 배열은 1~5개 항목으로 작성하세요.
+```
+
+#### Agent B가 Agent A의 개선 프롬프트 검토
+
+```
+당신은 교육학 및 평가 이론 관점의 평가 전문가입니다.
+
+먼저 `.claude/agents/evaluators/education-evaluator.md` 파일을 읽고 전문 관점을 숙지하세요.
+
+다른 전문가(프롬프트 엔지니어)가 작성한 개선 프롬프트를 교육학적 관점에서 검토해주세요.
+블룸 택소노미, 문항 변별력, 교육적 타당성, 학습 목표 정렬 측면에서 강점, 약점, 개선안을 제시합니다.
+
+**원본 프롬프트:**
+{프롬프트의 promptText}
+
+**프롬프트 엔지니어의 개선 프롬프트:**
+{data/temp/agent-a-{프롬프트ID}.json의 improvedPrompt}
+
+## 검토 결과 형식
+
+결과를 `data/temp/prompt-review-b-{프롬프트ID}.json` 파일에 저장하세요:
+
+{
+  "reviewerRole": "education-evaluator",
+  "targetRole": "prompt-engineer",
+  "strengths": ["강점 1", "강점 2", ...],
+  "weaknesses": ["약점 1", "약점 2", ...],
+  "suggestions": ["개선안 1", "개선안 2", ...],
+  "mustIncludeElements": ["필수 포함 요소 1", "필수 포함 요소 2", ...]
+}
+
+각 배열은 1~5개 항목으로 작성하세요.
+```
+
+### 7. Phase 2.5 결과 확인 및 debateLog 기록
+
+- `data/temp/prompt-review-a-{프롬프트ID}.json`과 `data/temp/prompt-review-b-{프롬프트ID}.json`을 읽습니다
+- 각 파일의 JSON 스키마가 PromptReviewComment 인터페이스에 맞는지 검증합니다
+- Phase 2.5 debateLog 메시지를 기록합니다 (각 에이전트의 프롬프트 교차 검토 내용을 DebateMessage 형식으로)
+
+### 8. Phase 3 - 합의 도출
 
 합의 조정자 에이전트를 호출합니다:
 
@@ -300,6 +374,12 @@
 **Agent B의 교차 검토 (Agent A에 대한):**
 {data/temp/cross-review-b-{프롬프트ID}.json의 내용}
 
+**Agent A의 개선 프롬프트 교차 검토 (Agent B 프롬프트에 대한):**
+{data/temp/prompt-review-a-{프롬프트ID}.json의 내용}
+
+**Agent B의 개선 프롬프트 교차 검토 (Agent A 프롬프트에 대한):**
+{data/temp/prompt-review-b-{프롬프트ID}.json의 내용}
+
 ## 합의 결과 형식
 
 결과를 `data/temp/consensus-{프롬프트ID}.json` 파일에 저장하세요:
@@ -324,7 +404,7 @@
 }
 ```
 
-### 7. 최종 결과 조립 및 저장
+### 9. 최종 결과 조립 및 저장
 
 Phase 3의 합의 결과와 전체 토론 데이터를 조합하여 최종 결과를 `data/results/{프롬프트ID}.json`에 저장합니다.
 
@@ -374,6 +454,12 @@ Phase 3의 합의 결과와 전체 토론 데이터를 조합하여 최종 결�
       "completedAt": "..."
     },
     {
+      "phase": "prompt-cross-review",
+      "messages": [...],
+      "startedAt": "...",
+      "completedAt": "..."
+    },
+    {
       "phase": "consensus",
       "messages": [...],
       "startedAt": "...",
@@ -381,7 +467,7 @@ Phase 3의 합의 결과와 전체 토론 데이터를 조합하여 최종 결�
     }
   ],
   "debateLog": [
-    (Phase 1~3의 모든 DebateMessage를 시간순으로 정렬)
+    (Phase 1~3(Phase 2.5 포함)의 모든 DebateMessage를 시간순으로 정렬)
   ],
   "consensusSummary": "(합의 consensusSummary)"
 }
@@ -393,36 +479,38 @@ debateLog의 각 DebateMessage 형식:
 {
   "agent": "Agent A" | "Agent B" | "합의 조정자",
   "role": "prompt-engineer" | "education-evaluator" | "consensus-moderator",
-  "phase": "independent-evaluation" | "cross-review" | "consensus",
+  "phase": "independent-evaluation" | "cross-review" | "prompt-cross-review" | "consensus",
   "content": "에이전트의 평가/검토/합의 내용 요약",
   "timestamp": "ISO 8601 형식"
 }
 ```
 
-### 8. 데이터 검증
+### 10. 데이터 검증
 
 - 최종 결과 파일을 읽어 스키마가 올바른지 검증합니다
 - `totalScore`가 `rubricScores`의 `score` 합계와 일치하는지 확인합니다
 - `grade`가 등급 기준에 맞는지 확인합니다
 - `evaluationMode`가 `"debate"`인지 확인합니다
 - `agentEvaluations`에 2개 에이전트의 평가가 모두 포함되었는지 확인합니다
-- `debateRounds`에 3개 phase가 모두 포함되었는지 확인합니다
+- `debateRounds`에 4개 phase(independent-evaluation, cross-review, prompt-cross-review, consensus)가 모두 포함되었는지 확인합니다
 - 불일치 시 직접 수정합니다
 
-### 9. 임시 파일 정리
+### 11. 임시 파일 정리
 
 - `data/temp/` 디렉토리의 해당 프롬프트 관련 임시 파일을 모두 삭제합니다:
   - `data/temp/agent-a-{프롬프트ID}.json`
   - `data/temp/agent-b-{프롬프트ID}.json`
   - `data/temp/cross-review-a-{프롬프트ID}.json`
   - `data/temp/cross-review-b-{프롬프트ID}.json`
+  - `data/temp/prompt-review-a-{프롬프트ID}.json`
+  - `data/temp/prompt-review-b-{프롬프트ID}.json`
   - `data/temp/consensus-{프롬프트ID}.json`
 
-### 10. 프롬프트 상태 업데이트
+### 12. 프롬프트 상태 업데이트
 
 - `lib/data.ts`의 `updatePromptStatus(id, "validated")`를 호출하여 프롬프트를 `data/prompts/pending/`에서 `data/prompts/complete/`로 이동합니다
 
-### 11. 완료 보고
+### 13. 완료 보고
 
 - 평가된 프롬프트 ID, 평가 모드(debate), 합의 총점, 등급을 요약하여 출력합니다
 - Agent A/B의 개별 점수도 함께 표시합니다

@@ -79,6 +79,7 @@ export type EvaluationMode = "single" | "debate";
 export type DebatePhase =
   | "independent-evaluation"
   | "cross-review"
+  | "prompt-cross-review"
   | "consensus";
 
 /** 토론 메시지 */
@@ -108,6 +109,22 @@ export interface CrossReviewComment {
   originalScore: number;
   suggestedScore: number;
   comment: string;
+}
+
+/** 개선 프롬프트 교차 검토 코멘트 (Phase 2.5) */
+export interface PromptReviewComment {
+  /** 검토자 역할 */
+  reviewerRole: AgentRole;
+  /** 검토 대상 역할 */
+  targetRole: AgentRole;
+  /** 강점 (1~5개) */
+  strengths: string[];
+  /** 약점 (1~5개) */
+  weaknesses: string[];
+  /** 개선안 (1~5개) */
+  suggestions: string[];
+  /** 필수 포함 요소 (1~5개) */
+  mustIncludeElements: string[];
 }
 
 /** 토론 라운드 */

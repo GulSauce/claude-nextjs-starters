@@ -54,9 +54,11 @@
 ### Step 4: 개선 프롬프트 작성
 
 - 두 에이전트의 improvedPrompt를 비교
-- 프롬프트 구조/형식은 Agent A(프롬프트 엔지니어)의 제안을 우선
-- 교육적 내용(Bloom's 매핑, IWF 방지 등)은 Agent B(교육 평가 전문가)의 제안을 우선
-- 상충하는 제안은 근거를 비교하여 선택
+- **개선 프롬프트 교차 검토 결과(PromptReviewComment)를 핵심 참고 자료로 활용**
+- 프롬프트 구조/형식은 Agent A(프롬프트 엔지니어)의 제안을 우선하되, Agent B 교차 검토에서 지적된 교육적 내용 누락을 반영
+- 교육적 내용(Bloom's 매핑, IWF 방지 등)은 Agent B(교육 평가 전문가)의 제안을 우선하되, Agent A 교차 검토에서 지적된 기술적 문제를 반영
+- 양쪽 `mustIncludeElements`를 확인하고 최종 프롬프트에 모두 포함
+- 상충하는 제안은 교차 검토의 `strengths`/`weaknesses` 분석 근거를 바탕으로 판단
 
 ### Step 5: consensusSummary 작성
 
@@ -75,6 +77,12 @@
 
 ### 관점 차이 해소
 - 프롬프트 엔지니어링 vs 교육학 관점에서 달랐던 평가와 해소 방법
+
+### 개선 프롬프트 통합 근거
+- Agent A의 improvedPrompt에서 채택한 요소와 근거
+- Agent B의 improvedPrompt에서 채택한 요소와 근거
+- 양쪽 공통 지적 필수 요소(mustIncludeElements) 반영 여부
+- 채택하지 않은 제안과 그 사유
 
 ### 최종 판정
 - 총점: {점수}/100
