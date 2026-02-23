@@ -9,6 +9,7 @@ import {
   CardDescription,
   CardAction,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { ScoreBadge } from "@/components/score-badge";
 import type { ValidationResult } from "@/lib/types";
 
@@ -26,7 +27,14 @@ export function HistoryCard({ result, promptText }: HistoryCardProps) {
       <Card className="transition-colors hover:border-foreground/20">
         <CardHeader>
           <div className="space-y-1">
-            <CardTitle className="text-base">{result.targetModel}</CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-base">{result.targetModel}</CardTitle>
+              {result.evaluationMode === "debate" && (
+                <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                  Debate
+                </Badge>
+              )}
+            </div>
             <CardDescription>
               {format(new Date(result.validatedAt), "yyyy년 M월 d일 HH:mm", {
                 locale: ko,
