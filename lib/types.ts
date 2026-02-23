@@ -7,7 +7,6 @@ export type TargetModel = "gpt-4.1" | "gemini-3-flash" | "claude-sonnet-4";
 export type CriterionId =
   | "clarity"
   | "document_grounding"
-  | "output_format"
   | "difficulty_control"
   | "answer_quality"
   | "edge_cases"

@@ -1,12 +1,11 @@
 # /validate - 퀴즈 메타프롬프트 검증 커맨드
 
-`data/prompts/` 디렉토리에서 `status: "pending"` 상태인 프롬프트를 찾아 전문 평가 에이전트를 통해 루브릭 기반 평가를 수행하고 결과를 저장합니다.
+`data/prompts/pending/` 디렉토리의 프롬프트를 찾아 전문 평가 에이전트를 통해 루브릭 기반 평가를 수행하고 결과를 저장합니다.
 
 ## 실행 절차
 
 1. **대기 중인 프롬프트 탐색**
-   - `data/prompts/` 디렉토리의 모든 JSON 파일을 읽습니다
-   - `status`가 `"pending"`인 파일을 찾습니다
+   - `data/prompts/pending/` 디렉토리의 모든 JSON 파일을 읽습니다
    - 해당 파일이 없으면 "검증할 프롬프트가 없습니다"를 출력하고 종료합니다
 
 2. **각 pending 프롬프트에 대해 평가 에이전트를 호출합니다**
@@ -18,7 +17,8 @@
 
    먼저 `.claude/agents/docs/quiz-prompt-evaluator.md` 파일을 읽고, 그 내용의 전문 지식과 평가 기준을 숙지하세요.
 
-   아래 프롬프트를 7개 루브릭 기준으로 평가해주세요.
+   아래 프롬프트를 6개 루브릭 기준으로 평가해주세요.
+   단, 구조화된 출력 형식(JSON 스키마 등)은 시스템 프롬프트에서 개발자가 별도로 지정하므로 평가 대상에서 제외합니다.
 
    **대상 모델**: {프롬프트의 targetModel}
    **프롬프트 ID**: {프롬프트의 id}
@@ -41,24 +41,16 @@
        {
          "criterionId": "clarity",
          "criterionName": "명확성과 구체성",
-         "score": (0-20),
-         "maxScore": 20,
+         "score": (0-25),
+         "maxScore": 25,
          "feedback": "상세 피드백",
          "suggestion": "개선 제안"
        },
        {
          "criterionId": "document_grounding",
          "criterionName": "문서 기반 지시",
-         "score": (0-15),
-         "maxScore": 15,
-         "feedback": "상세 피드백",
-         "suggestion": "개선 제안"
-       },
-       {
-         "criterionId": "output_format",
-         "criterionName": "출력 형식 정의",
-         "score": (0-15),
-         "maxScore": 15,
+         "score": (0-20),
+         "maxScore": 20,
          "feedback": "상세 피드백",
          "suggestion": "개선 제안"
        },
@@ -73,8 +65,8 @@
        {
          "criterionId": "answer_quality",
          "criterionName": "정답 및 해설 품질",
-         "score": (0-15),
-         "maxScore": 15,
+         "score": (0-20),
+         "maxScore": 20,
          "feedback": "상세 피드백",
          "suggestion": "개선 제안"
        },
@@ -111,7 +103,7 @@
    - 불일치 시 직접 수정합니다
 
 4. **프롬프트 상태 업데이트**
-   - 해당 프롬프트 파일(`data/prompts/{id}.json`)의 `status`를 `"validated"`로 변경합니다
+   - `lib/data.ts`의 `updatePromptStatus(id, "validated")`를 호출하여 프롬프트를 `data/prompts/pending/`에서 `data/prompts/complete/`로 이동합니다
 
 5. **완료 보고**
    - 평가된 프롬프트 ID, 총점, 등급을 요약하여 출력합니다

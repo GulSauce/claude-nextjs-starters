@@ -2,28 +2,20 @@
 
 import type { Grade, RubricCriterion, TargetModel } from "./types";
 
-/** 7개 루브릭 평가 기준 (총 100점) */
+/** 6개 루브릭 평가 기준 (총 100점) */
 export const RUBRIC_CRITERIA: RubricCriterion[] = [
   {
     id: "clarity",
     name: "명확성과 구체성",
-    maxScore: 20,
-    description:
-      "퀴즈 유형, 난이도, 문항 수, 출력 형식 등이 구체적으로 명시되었는가",
+    maxScore: 25,
+    description: "퀴즈 유형, 난이도, 문항 수 등이 구체적으로 명시되었는가",
   },
   {
     id: "document_grounding",
     name: "문서 기반 지시",
-    maxScore: 15,
+    maxScore: 20,
     description:
       '"제공된 문서 내용만으로" 퀴즈를 생성하라는 명시적 지시가 있는가',
-  },
-  {
-    id: "output_format",
-    name: "출력 형식 정의",
-    maxScore: 15,
-    description:
-      "퀴즈 출력 형식(JSON, 마크다운 등)이 파싱 가능한 수준으로 정의되었는가",
   },
   {
     id: "difficulty_control",
@@ -35,7 +27,7 @@ export const RUBRIC_CRITERIA: RubricCriterion[] = [
   {
     id: "answer_quality",
     name: "정답 및 해설 품질",
-    maxScore: 15,
+    maxScore: 20,
     description: "정답, 오답 선지, 해설 생성에 대한 명확한 지시 여부",
   },
   {
