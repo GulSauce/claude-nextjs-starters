@@ -127,7 +127,7 @@ docs/PRD.md를 기반으로 프로젝트 문서를 자동 생성/업데이트합
 - 데이터베이스 설정 (필요한 경우)
 - 환경 변수 템플릿
 - docs/PRD.md (프로젝트 요구사항 문서)
-- docs/ROADMAP.md (개발 로드맵)
+- docs/roadmaps/ROADMAP.md (개발 로드맵)
 - 업데이트된 README.md
 - 업데이트된 CLAUDE.md
 
@@ -264,7 +264,7 @@ npm run build
 ## 📖 문서
 
 - [PRD 문서](./docs/PRD.md) - 상세 요구사항
-- [개발 로드맵](./docs/ROADMAP.md) - 개발 계획
+- [개발 로드맵](./docs/roadmaps/) - 개발 계획
 - [개발 가이드](./CLAUDE.md) - 개발 지침
 ```
 

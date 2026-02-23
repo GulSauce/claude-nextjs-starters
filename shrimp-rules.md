@@ -3,15 +3,15 @@
 > 이 파일은 AI 행동 규칙, 의사결정 기준, 금지 사항의 진실의 원천이다.
 > 기술 스택, 명령어, 코딩 컨벤션은 `CLAUDE.md` 참조.
 > 제품 요구사항, 데이터 모델, 루브릭 기준은 `docs/PRD.md` 참조.
-> 개발 계획, Phase/Task, 작업 워크플로우는 `docs/ROADMAP.md` 참조.
+> 개발 계획, Phase/Task, 작업 워크플로우는 `docs/roadmaps/` 참조. (완료된 로드맵은 `[COMP]` 접두사)
 
 ## 작업 실행 규칙
 
-- **모든 작업은 `docs/ROADMAP.md`를 기준으로 계획하고 실행한다**
-- 작업 시작 전 반드시 `docs/ROADMAP.md`를 읽고 현재 Phase와 Task 진행 상태를 파악한다
+- **모든 작업은 `docs/roadmaps/`의 최신 ROADMAP을 기준으로 계획하고 실행한다** (`[COMP]` 접두사가 없는 파일이 현재 활성 로드맵)
+- 작업 시작 전 반드시 활성 로드맵을 읽고 현재 Phase와 Task 진행 상태를 파악한다
 - Phase 순서(1 → 2 → 3 → 4)를 준수하며, 각 Phase 내 Task도 명시된 순서를 따른다
 - 이전 Phase의 모든 Task가 완료되어야 다음 Phase로 진행할 수 있다
-- 작업 완료 시 `docs/ROADMAP.md`에서 해당 Task를 완료 표시로 변경한다
+- 작업 완료 시 활성 로드맵에서 해당 Task를 완료 표시로 변경한다
 - 각 단계 완료 후 중단하고 추가 지시를 기다린다
 
 ## 주요 파일 상호작용 규칙
@@ -26,13 +26,13 @@
 | 사이트 메타 변경 | `lib/site-config.ts`, `app/layout.tsx` (metadata), `components/layout/header.tsx`  |
 | 네비게이션 변경  | `lib/nav-items.ts`, `components/layout/header.tsx`, `components/mobile-nav.tsx`    |
 | 기술 스택 변경   | `package.json`, `CLAUDE.md` (기술 스택 섹션)                                       |
-| 작업 완료        | `docs/ROADMAP.md` (완료 표시), 해당 `/tasks/*.md` (진행 상황 업데이트)             |
+| 작업 완료        | `docs/roadmaps/ROADMAP_v*.md` (완료 표시), 해당 `/tasks/*.md` (진행 상황 업데이트) |
 
 ## AI 의사결정 기준
 
 ### 작업 우선순위
 
-1. `docs/ROADMAP.md`의 Phase/Task 순서를 최우선으로 따른다
+1. 활성 로드맵(`docs/roadmaps/`)의 Phase/Task 순서를 최우선으로 따른다
 2. 현재 Phase 내에서 "우선순위" 표시가 있는 Task를 먼저 처리한다
 3. 의존성이 있는 Task는 선행 Task 완료 후 진행한다
 
@@ -45,7 +45,7 @@
 
 ### 모호한 상황 대처
 
-- ROADMAP.md에 명시되지 않은 작업은 사용자에게 확인 후 진행한다
+- 활성 로드맵에 명시되지 않은 작업은 사용자에게 확인 후 진행한다
 - 기술적 선택이 필요한 경우 `CLAUDE.md`의 기술 스택을 우선 따른다
 - UI 디자인 결정은 shadcn/ui 기본 스타일을 따른다
 
@@ -58,7 +58,7 @@
 - **`components/ui/` 내 파일 직접 수정** 금지 — shadcn CLI로만 관리
 - **`any` 타입** 사용 금지
 - **인라인 스타일** (`style` 속성) 사용 금지
-- **ROADMAP.md 순서 무시** 금지 — Phase/Task 순서 엄수
+- **로드맵 순서 무시** 금지 — Phase/Task 순서 엄수
 - **CSS 파일 직접 작성** 금지 — Tailwind 유틸리티 클래스만 사용 (`globals.css` 테마 변수 제외)
 
 ### 주의 사항
