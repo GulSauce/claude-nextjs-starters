@@ -76,18 +76,24 @@ export async function getAllResults(): Promise<ValidationResult[]> {
   const files = await fs.readdir(RESULTS_DIR);
   const jsonFiles = files.filter((f) => f.endsWith(".json"));
 
-  const results = await Promise.all(
+  const resultsWithMtime = await Promise.all(
     jsonFiles.map(async (file) => {
-      const data = await fs.readFile(path.join(RESULTS_DIR, file), "utf-8");
-      return JSON.parse(data) as ValidationResult;
+      const filePath = path.join(RESULTS_DIR, file);
+      const [data, stat] = await Promise.all([
+        fs.readFile(filePath, "utf-8"),
+        fs.stat(filePath),
+      ]);
+      return {
+        result: JSON.parse(data) as ValidationResult,
+        mtime: stat.mtimeMs,
+      };
     }),
   );
 
-  // 검증 일시 기준 최신순 정렬
-  return results.sort(
-    (a, b) =>
-      new Date(b.validatedAt).getTime() - new Date(a.validatedAt).getTime(),
-  );
+  // 파일 수정 시각 기준 최신순 정렬
+  return resultsWithMtime
+    .sort((a, b) => b.mtime - a.mtime)
+    .map(({ result }) => result);
 }
 
 /** 프롬프트 상태 업데이트 (validated 시 pending → complete로 파일 이동) */
