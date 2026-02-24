@@ -7,6 +7,7 @@ import { ConsensusScoreCard } from "@/components/consensus-score-card";
 import { AgentEvaluationPanel } from "@/components/agent-evaluation-panel";
 import { DebateLog } from "@/components/debate-log";
 import { Badge } from "@/components/ui/badge";
+import { CopyableCodeBlock } from "@/components/copyable-code-block";
 import type { ValidationResult as ValidationResultType } from "@/lib/types";
 
 interface ValidationResultProps {
@@ -99,20 +100,12 @@ export function ValidationResult({
 
           {/* 탭 4: 개선된 프롬프트 */}
           <TabsContent value="improved" className="mt-4">
-            <div className="bg-muted rounded-lg p-6">
-              <pre className="whitespace-pre-wrap text-sm leading-relaxed">
-                {result.improvedPrompt}
-              </pre>
-            </div>
+            <CopyableCodeBlock content={result.improvedPrompt} />
           </TabsContent>
 
           {/* 탭 5: 원본 프롬프트 */}
           <TabsContent value="original" className="mt-4">
-            <div className="bg-muted rounded-lg p-6">
-              <pre className="whitespace-pre-wrap text-sm leading-relaxed">
-                {promptText}
-              </pre>
-            </div>
+            <CopyableCodeBlock content={promptText} />
           </TabsContent>
         </Tabs>
       ) : (
@@ -134,20 +127,12 @@ export function ValidationResult({
 
           {/* 탭 2: 개선된 프롬프트 */}
           <TabsContent value="improved" className="mt-4">
-            <div className="bg-muted rounded-lg p-6">
-              <pre className="whitespace-pre-wrap text-sm leading-relaxed">
-                {result.improvedPrompt}
-              </pre>
-            </div>
+            <CopyableCodeBlock content={result.improvedPrompt} />
           </TabsContent>
 
           {/* 탭 3: 원본 프롬프트 */}
           <TabsContent value="original" className="mt-4">
-            <div className="bg-muted rounded-lg p-6">
-              <pre className="whitespace-pre-wrap text-sm leading-relaxed">
-                {promptText}
-              </pre>
-            </div>
+            <CopyableCodeBlock content={promptText} />
           </TabsContent>
         </Tabs>
       )}
