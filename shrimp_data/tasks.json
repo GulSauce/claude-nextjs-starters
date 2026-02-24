@@ -5,10 +5,10 @@
       "name": "DebatePhase 타입 확장 및 PromptReviewComment 인터페이스 추가",
       "description": "lib/types.ts에 Phase 2.5 관련 타입을 추가한다.\\n\\n1. DebatePhase 유니온 타입에 'prompt-cross-review' 리터럴 추가\\n2. PromptReviewComment 인터페이스 신규 정의:\\n   - reviewerRole: AgentRole (검토자 역할)\\n   - targetRole: AgentRole (검토 대상 역할)\\n   - strengths: string[] (강점, 1~5개)\\n   - weaknesses: string[] (약점, 1~5개)\\n   - suggestions: string[] (개선안, 1~5개)\\n   - mustIncludeElements: string[] (필수 포함 요소, 1~5개)\\n\\n하위 호환성: 기존 3-phase 결과는 prompt-cross-review 라운드가 없을 뿐 정상 동작",
       "notes": "기존 CrossReviewComment와 목적이 다름 (점수 교차 검토 vs 프롬프트 교차 검토). 별도 인터페이스가 적절.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [],
       "createdAt": "2026-02-23T11:10:50.067Z",
-      "updatedAt": "2026-02-23T11:10:50.067Z",
+      "updatedAt": "2026-02-23T11:14:33.816Z",
       "relatedFiles": [
         {
           "path": "lib/types.ts",
@@ -20,21 +20,23 @@
       ],
       "implementationGuide": "1. lib/types.ts의 DebatePhase 타입(79~82행)을 수정:\\n   export type DebatePhase = 'independent-evaluation' | 'cross-review' | 'prompt-cross-review' | 'consensus';\\n\\n2. CrossReviewComment 인터페이스(103~111행) 아래에 PromptReviewComment 인터페이스를 추가:\\n   export interface PromptReviewComment {\\n     reviewerRole: AgentRole;\\n     targetRole: AgentRole;\\n     strengths: string[];\\n     weaknesses: string[];\\n     suggestions: string[];\\n     mustIncludeElements: string[];\\n   }\\n\\n3. JSDoc 주석을 한국어로 작성 (기존 패턴 따름)",
       "verificationCriteria": "1. DebatePhase에 'prompt-cross-review' 리터럴이 포함됨\\n2. PromptReviewComment 인터페이스가 6개 필드(reviewerRole, targetRole, strengths, weaknesses, suggestions, mustIncludeElements)를 가짐\\n3. npm run lint 에러 없음\\n4. 기존 타입 사용처에서 컴파일 에러 없음",
-      "analysisResult": "Phase 6: 듀얼 에이전트 토론 프로세스에 Phase 2.5(개선 프롬프트 교차 검토) 단계를 삽입한다. 기존 3-phase(독립 평가 → 점수 교차 검토 → 합의)에서 4-phase(독립 평가 → 점수 교차 검토 → 개선 프롬프트 교차 검토 → 합의)로 확장하여, 합의 조정자가 양쪽 에이전트의 근거 있는 프롬프트 피드백을 기반으로 더 높은 품질의 최종 개선 프롬프트를 도출하도록 한다. 하위 호환성 유지 필수 — 기존 3-phase 결과는 정상 동작해야 한다."
+      "analysisResult": "Phase 6: 듀얼 에이전트 토론 프로세스에 Phase 2.5(개선 프롬프트 교차 검토) 단계를 삽입한다. 기존 3-phase(독립 평가 → 점수 교차 검토 → 합의)에서 4-phase(독립 평가 → 점수 교차 검토 → 개선 프롬프트 교차 검토 → 합의)로 확장하여, 합의 조정자가 양쪽 에이전트의 근거 있는 프롬프트 피드백을 기반으로 더 높은 품질의 최종 개선 프롬프트를 도출하도록 한다. 하위 호환성 유지 필수 — 기존 3-phase 결과는 정상 동작해야 한다.",
+      "summary": "DebatePhase 타입에 'prompt-cross-review' 리터럴 추가 완료. PromptReviewComment 인터페이스(reviewerRole, targetRole, strengths, weaknesses, suggestions, mustIncludeElements 6개 필드)를 CrossReviewComment 아래에 한국어 JSDoc과 함께 정의 완료. lint 에러 없음.",
+      "completedAt": "2026-02-23T11:14:33.811Z"
     },
     {
       "id": "a68c8338-bafe-4682-aaa1-de18c24c559e",
       "name": "토론 로그 UI Phase 2.5 상수 추가",
       "description": "components/debate-log.tsx의 PHASE_LABEL과 PHASE_ORDER 상수에 prompt-cross-review phase를 추가하여, 토론 로그 UI에서 Phase 2.5 섹션이 표시되도록 한다.",
       "notes": "기존 3-phase 결과 페이지에서 Phase 2.5 섹션이 빈 메시지로 표시될 수 있음. 현재 UX에서는 '이 단계의 메시지가 없습니다' 문구가 나타남 — 허용 가능한 동작.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "8a87fa8c-948a-422f-8c13-fab2f94b8166"
         }
       ],
       "createdAt": "2026-02-23T11:10:50.067Z",
-      "updatedAt": "2026-02-23T11:10:50.067Z",
+      "updatedAt": "2026-02-23T11:15:05.129Z",
       "relatedFiles": [
         {
           "path": "components/debate-log.tsx",
@@ -46,21 +48,23 @@
       ],
       "implementationGuide": "1. components/debate-log.tsx의 PHASE_LABEL(31~35행) 수정:\\n   const PHASE_LABEL: Record<DebatePhase, string> = {\\n     'independent-evaluation': 'Phase 1: 독립 평가',\\n     'cross-review': 'Phase 2: 교차 검토',\\n     'prompt-cross-review': 'Phase 2.5: 개선 프롬프트 교차 검토',\\n     consensus: 'Phase 3: 합의 도출',\\n   };\\n\\n2. PHASE_ORDER(38~42행) 수정 — cross-review와 consensus 사이에 삽입:\\n   const PHASE_ORDER: DebatePhase[] = [\\n     'independent-evaluation',\\n     'cross-review',\\n     'prompt-cross-review',\\n     'consensus',\\n   ];\\n\\n3. getMessagesForPhase 로직은 변경 불필요 (해당 phase 메시지 없으면 빈 배열 반환)",
       "verificationCriteria": "1. PHASE_LABEL에 'prompt-cross-review' 키와 'Phase 2.5: 개선 프롬프트 교차 검토' 값이 존재\\n2. PHASE_ORDER에서 'prompt-cross-review'가 'cross-review'와 'consensus' 사이에 위치\\n3. npm run lint 에러 없음\\n4. TypeScript 컴파일 에러 없음",
-      "analysisResult": "Phase 6: 듀얼 에이전트 토론 프로세스에 Phase 2.5(개선 프롬프트 교차 검토) 단계를 삽입한다. 기존 3-phase(독립 평가 → 점수 교차 검토 → 합의)에서 4-phase(독립 평가 → 점수 교차 검토 → 개선 프롬프트 교차 검토 → 합의)로 확장하여, 합의 조정자가 양쪽 에이전트의 근거 있는 프롬프트 피드백을 기반으로 더 높은 품질의 최종 개선 프롬프트를 도출하도록 한다. 하위 호환성 유지 필수 — 기존 3-phase 결과는 정상 동작해야 한다."
+      "analysisResult": "Phase 6: 듀얼 에이전트 토론 프로세스에 Phase 2.5(개선 프롬프트 교차 검토) 단계를 삽입한다. 기존 3-phase(독립 평가 → 점수 교차 검토 → 합의)에서 4-phase(독립 평가 → 점수 교차 검토 → 개선 프롬프트 교차 검토 → 합의)로 확장하여, 합의 조정자가 양쪽 에이전트의 근거 있는 프롬프트 피드백을 기반으로 더 높은 품질의 최종 개선 프롬프트를 도출하도록 한다. 하위 호환성 유지 필수 — 기존 3-phase 결과는 정상 동작해야 한다.",
+      "summary": "PHASE_LABEL에 'prompt-cross-review': 'Phase 2.5: 개선 프롬프트 교차 검토' 추가, PHASE_ORDER에서 cross-review와 consensus 사이에 prompt-cross-review 삽입 완료. lint 에러 없음.",
+      "completedAt": "2026-02-23T11:15:05.128Z"
     },
     {
       "id": "f1f9891b-6ae5-47b9-8339-5d42ab2b62d7",
       "name": "합의 조정자 에이전트 문서 확장",
       "description": ".claude/agents/evaluators/consensus-moderator.md를 수정하여, 개선 프롬프트 교차 검토 결과를 합의 프로세스에서 활용하는 지침을 추가한다.",
       "notes": "마크다운 문서 수정이므로 빌드 영향 없음. 에이전트 행동 지침만 변경.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "8a87fa8c-948a-422f-8c13-fab2f94b8166"
         }
       ],
       "createdAt": "2026-02-23T11:10:50.067Z",
-      "updatedAt": "2026-02-23T11:10:50.067Z",
+      "updatedAt": "2026-02-23T11:15:45.065Z",
       "relatedFiles": [
         {
           "path": ".claude/agents/evaluators/consensus-moderator.md",
@@ -72,21 +76,23 @@
       ],
       "implementationGuide": "1. Step 4 '개선 프롬프트 작성' 섹션 확장:\\n   - 개선 프롬프트 교차 검토 결과(PromptReviewComment)를 핵심 참고 자료로 활용하는 지침 추가\\n   - 프롬프트 구조/형식: Agent A 우선, Agent B 교차 검토의 교육적 내용 누락 반영\\n   - 교육적 내용: Agent B 우선, Agent A 교차 검토의 기술적 문제 반영\\n   - 양쪽 mustIncludeElements 확인 및 최종 프롬프트에 포함\\n   - 상충 제안은 교차 검토의 strengths/weaknesses 분석 근거로 판단\\n\\n2. Step 5 'consensusSummary 작성' 확장:\\n   - '개선 프롬프트 통합 근거' 섹션 추가:\\n     - Agent A의 improvedPrompt에서 채택한 요소와 근거\\n     - Agent B의 improvedPrompt에서 채택한 요소와 근거\\n     - 양쪽 공통 지적 필수 요소 반영 여부\\n     - 채택하지 않은 제안과 그 사유",
       "verificationCriteria": "1. Step 4에 교차 검토 결과 활용 지침이 포함됨\\n2. Step 5의 consensusSummary 템플릿에 '개선 프롬프트 통합 근거' 섹션이 포함됨\\n3. 기존 Step 1~3의 내용이 변경되지 않음\\n4. 문서 마크다운 형식이 올바름",
-      "analysisResult": "Phase 6: 듀얼 에이전트 토론 프로세스에 Phase 2.5(개선 프롬프트 교차 검토) 단계를 삽입한다. 기존 3-phase(독립 평가 → 점수 교차 검토 → 합의)에서 4-phase(독립 평가 → 점수 교차 검토 → 개선 프롬프트 교차 검토 → 합의)로 확장하여, 합의 조정자가 양쪽 에이전트의 근거 있는 프롬프트 피드백을 기반으로 더 높은 품질의 최종 개선 프롬프트를 도출하도록 한다. 하위 호환성 유지 필수 — 기존 3-phase 결과는 정상 동작해야 한다."
+      "analysisResult": "Phase 6: 듀얼 에이전트 토론 프로세스에 Phase 2.5(개선 프롬프트 교차 검토) 단계를 삽입한다. 기존 3-phase(독립 평가 → 점수 교차 검토 → 합의)에서 4-phase(독립 평가 → 점수 교차 검토 → 개선 프롬프트 교차 검토 → 합의)로 확장하여, 합의 조정자가 양쪽 에이전트의 근거 있는 프롬프트 피드백을 기반으로 더 높은 품질의 최종 개선 프롬프트를 도출하도록 한다. 하위 호환성 유지 필수 — 기존 3-phase 결과는 정상 동작해야 한다.",
+      "summary": "Step 4에 PromptReviewComment 활용 지침(mustIncludeElements 확인, strengths/weaknesses 근거 판단) 추가. Step 5 consensusSummary 템플릿에 '개선 프롬프트 통합 근거' 섹션 추가. Step 1~3 변경 없음.",
+      "completedAt": "2026-02-23T11:15:45.064Z"
     },
     {
       "id": "66db9150-e2be-4bf4-b02c-6046478dbc7e",
       "name": "validate 커맨드 Phase 2.5 삽입 및 재작성",
       "description": ".claude/commands/validate.md를 수정하여 Phase 2와 Phase 3 사이에 Phase 2.5(개선 프롬프트 교차 검토) 단계를 삽입하고, 전체 섹션 번호를 재조정한다.",
       "notes": "가장 대규모 변경 작업. 전체 섹션 번호 재조정 필요. 기존 내용을 유지하면서 새 섹션만 삽입하는 방식으로 진행.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "f1f9891b-6ae5-47b9-8339-5d42ab2b62d7"
         }
       ],
       "createdAt": "2026-02-23T11:10:50.067Z",
-      "updatedAt": "2026-02-23T11:10:50.067Z",
+      "updatedAt": "2026-02-23T11:17:51.924Z",
       "relatedFiles": [
         {
           "path": ".claude/commands/validate.md",
@@ -98,14 +104,16 @@
       ],
       "implementationGuide": "1. 기존 섹션 5(Phase 2 결과 확인) 이후에 새 섹션 삽입:\\n\\n   새 섹션 6: Phase 2.5 - 개선 프롬프트 병렬 교차 검토\\n   - Agent A/B를 병렬로 호출하여 상대방의 improvedPrompt를 자신의 전문 관점에서 검토\\n   - Agent A 결과 -> data/temp/prompt-review-a-{프롬프트ID}.json\\n   - Agent B 결과 -> data/temp/prompt-review-b-{프롬프트ID}.json\\n   - JSON 스키마: PromptReviewComment 인터페이스 준수\\n\\n   새 섹션 7: Phase 2.5 결과 확인 및 debateLog 기록\\n   - 두 파일 읽기 및 검증\\n   - Phase 2.5 debateLog 메시지 기록\\n\\n2. 기존 섹션 6(Phase 3 합의) -> 새 섹션 8로 재번호\\n   - 합의 프롬프트에 교차 검토 결과(prompt-review-a/b) 입력 추가\\n\\n3. 기존 섹션 7~11 -> 새 섹션 9~13으로 재번호\\n\\n4. 임시 파일 정리 목록 확장 (5개 -> 7개: prompt-review-a/b 추가)\\n\\n5. debateRounds 검증 항목: 4개 phase(independent-evaluation, cross-review, prompt-cross-review, consensus)\\n\\n6. debateLog DebateMessage 형식의 phase 목록에 prompt-cross-review 추가",
       "verificationCriteria": "1. 전체 13개 섹션으로 구성됨\\n2. 섹션 6에 Phase 2.5 병렬 교차 검토 내용이 포함됨\\n3. 섹션 7에 Phase 2.5 결과 확인 및 debateLog 기록이 포함됨\\n4. 섹션 8(구 섹션 6)의 Phase 3 합의 프롬프트에 교차 검토 결과 입력이 추가됨\\n5. 임시 파일 정리 목록이 7개(agent-a, agent-b, cross-review-a, cross-review-b, prompt-review-a, prompt-review-b, consensus)\\n6. debateRounds 검증이 4개 phase를 확인함\\n7. debateLog DebateMessage 형식에 prompt-cross-review phase 포함",
-      "analysisResult": "Phase 6: 듀얼 에이전트 토론 프로세스에 Phase 2.5(개선 프롬프트 교차 검토) 단계를 삽입한다. 기존 3-phase(독립 평가 → 점수 교차 검토 → 합의)에서 4-phase(독립 평가 → 점수 교차 검토 → 개선 프롬프트 교차 검토 → 합의)로 확장하여, 합의 조정자가 양쪽 에이전트의 근거 있는 프롬프트 피드백을 기반으로 더 높은 품질의 최종 개선 프롬프트를 도출하도록 한다. 하위 호환성 유지 필수 — 기존 3-phase 결과는 정상 동작해야 한다."
+      "analysisResult": "Phase 6: 듀얼 에이전트 토론 프로세스에 Phase 2.5(개선 프롬프트 교차 검토) 단계를 삽입한다. 기존 3-phase(독립 평가 → 점수 교차 검토 → 합의)에서 4-phase(독립 평가 → 점수 교차 검토 → 개선 프롬프트 교차 검토 → 합의)로 확장하여, 합의 조정자가 양쪽 에이전트의 근거 있는 프롬프트 피드백을 기반으로 더 높은 품질의 최종 개선 프롬프트를 도출하도록 한다. 하위 호환성 유지 필수 — 기존 3-phase 결과는 정상 동작해야 한다.",
+      "summary": "validate.md를 11→13섹션으로 확장. Phase 2.5(개선 프롬프트 병렬 교차 검토) 섹션 6-7 삽입, Phase 3 합의 입력에 prompt-review 결과 추가, debateRounds 4-phase로 확장, 임시 파일 7개로 확장, DebateMessage phase에 prompt-cross-review 포함.",
+      "completedAt": "2026-02-23T11:17:51.923Z"
     },
     {
       "id": "0395bf7b-9943-4dc8-b5d8-addd3dc4c724",
       "name": "문서 갱신 및 통합 검증",
       "description": "CLAUDE.md와 docs/PRD.md를 업데이트하고, lint/build/E2E 검증을 수행하여 Phase 6 구현의 일관성을 확보한다.",
       "notes": "모든 코드 변경(Task 022~025) 완료 후 수행. 문서 갱신 규칙(CLAUDE.md 유지 규칙, 문서 연동 규칙)을 따름.",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "a68c8338-bafe-4682-aaa1-de18c24c559e"
@@ -115,7 +123,7 @@
         }
       ],
       "createdAt": "2026-02-23T11:10:50.067Z",
-      "updatedAt": "2026-02-23T11:10:50.067Z",
+      "updatedAt": "2026-02-23T11:22:27.560Z",
       "relatedFiles": [
         {
           "path": "CLAUDE.md",
@@ -130,7 +138,9 @@
       ],
       "implementationGuide": "1. CLAUDE.md 업데이트:\\n   - 핵심 데이터 플로우 4번 항목에 Phase 2.5 추가\\n   - 데이터 플로우: Phase 1 -> Phase 2 -> Phase 2.5 -> Phase 3\\n\\n2. docs/PRD.md 업데이트:\\n   - 기능 명세 테이블에 F016 추가 (개선 프롬프트 교차 검토)\\n   - 데이터 모델에 PromptReviewComment 인터페이스 추가\\n   - DebateMessage.phase 타입에 prompt-cross-review 추가\\n   - 사용자 여정의 /validate 설명에 Phase 2.5 반영\\n\\n3. npm run lint 실행 — 에러 없음 확인\\n\\n4. npx next build 실행 — 빌드 성공 확인\\n\\n5. Playwright MCP E2E 검증:\\n   - 결과 페이지 토론 로그 UI에 Phase 2.5 섹션 표시 확인\\n   - 기존 3-phase 결과(Phase 2.5 없음)의 하위 호환 렌더링 확인",
       "verificationCriteria": "1. CLAUDE.md 데이터 플로우에 Phase 2.5가 포함됨\\n2. docs/PRD.md에 F016과 PromptReviewComment가 추가됨\\n3. npm run lint 에러 없음\\n4. npx next build 성공\\n5. 기존 3-phase 결과 페이지가 정상 렌더링됨 (하위 호환)",
-      "analysisResult": "Phase 6: 듀얼 에이전트 토론 프로세스에 Phase 2.5(개선 프롬프트 교차 검토) 단계를 삽입한다. 기존 3-phase(독립 평가 → 점수 교차 검토 → 합의)에서 4-phase(독립 평가 → 점수 교차 검토 → 개선 프롬프트 교차 검토 → 합의)로 확장하여, 합의 조정자가 양쪽 에이전트의 근거 있는 프롬프트 피드백을 기반으로 더 높은 품질의 최종 개선 프롬프트를 도출하도록 한다. 하위 호환성 유지 필수 — 기존 3-phase 결과는 정상 동작해야 한다."
+      "analysisResult": "Phase 6: 듀얼 에이전트 토론 프로세스에 Phase 2.5(개선 프롬프트 교차 검토) 단계를 삽입한다. 기존 3-phase(독립 평가 → 점수 교차 검토 → 합의)에서 4-phase(독립 평가 → 점수 교차 검토 → 개선 프롬프트 교차 검토 → 합의)로 확장하여, 합의 조정자가 양쪽 에이전트의 근거 있는 프롬프트 피드백을 기반으로 더 높은 품질의 최종 개선 프롬프트를 도출하도록 한다. 하위 호환성 유지 필수 — 기존 3-phase 결과는 정상 동작해야 한다.",
+      "summary": "CLAUDE.md 데이터 플로우에 Phase 2.5 추가, 현재 상태를 Phase 6으로 갱신, /validate 설명 업데이트 완료. docs/PRD.md는 이미 F016, PromptReviewComment, DebateMessage.phase에 prompt-cross-review가 포함된 상태. npm run lint 에러 없음, npm run build 성공.",
+      "completedAt": "2026-02-23T11:22:27.558Z"
     }
   ]
 }
