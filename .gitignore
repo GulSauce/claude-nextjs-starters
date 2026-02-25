@@ -42,6 +42,8 @@ next-env.d.ts
 
 # development tools
 .playwright-mcp/
+.claude/plans/
+shrimp_data/
 
 # 데이터 파일 (JSON)
 data/prompts/**/*.json
