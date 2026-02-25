@@ -98,11 +98,12 @@ export function HistoryCard({ result, promptText }: HistoryCardProps) {
 
   return (
     <Link href={`/results/${result.promptId}`} className="block">
-      {/* 검토 완료 시 border 색상과 배경을 변경하여 시각적으로 구분 */}
+      {/* 검토 완료 시 border 색상, 배경, 왼쪽 강조선 변경하여 시각적으로 구분 */}
       <Card
         className={cn(
-          "transition-colors hover:border-foreground/20",
-          isReviewed && "border-border/40 bg-muted/30",
+          "card-hover transition-colors hover:border-foreground/20",
+          isReviewed &&
+            "border-border/40 bg-muted/30 border-l-4 border-l-primary/30",
         )}
       >
         <CardHeader>

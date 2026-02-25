@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Code2, GraduationCap, Scale } from "lucide-react";
 import type {
   AgentRole,
   DebateMessage,
@@ -62,27 +63,51 @@ function getBubbleAlignment(role: AgentRole): "left" | "center" | "right" {
   return "center"; // consensus-moderator
 }
 
-/** 역할에 따른 말풍선 색상 클래스 반환 */
+/** 역할에 따른 말풍선 색상 클래스 반환 (시맨틱 CSS 변수 기반) */
 function getBubbleColorClass(role: AgentRole): string {
   if (role === "prompt-engineer") {
-    return "bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800";
+    return "agent-a-bg agent-a-border border";
   }
   if (role === "education-evaluator") {
-    return "bg-purple-50 dark:bg-purple-950 border border-purple-200 dark:border-purple-800";
+    return "agent-b-bg agent-b-border border";
   }
   // consensus-moderator
-  return "bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800";
+  return "agent-consensus-bg agent-consensus-border border";
 }
 
-/** 역할에 따른 뱃지 색상 클래스 반환 */
+/** 역할에 따른 뱃지 색상 클래스 반환 (시맨틱 CSS 변수 기반) */
 function getRoleBadgeClass(role: AgentRole): string {
   if (role === "prompt-engineer") {
-    return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+    return "agent-a-bg agent-a-text";
   }
   if (role === "education-evaluator") {
-    return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
+    return "agent-b-bg agent-b-text";
   }
-  return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+  return "agent-consensus-bg agent-consensus-text";
+}
+
+/** 역할에 따른 아바타 아이콘 컴포넌트 반환 */
+function AgentAvatar({ role }: { role: AgentRole }) {
+  if (role === "prompt-engineer") {
+    return (
+      <span className="rounded-full p-1.5 agent-a-bg agent-a-text">
+        <Code2 className="h-4 w-4" />
+      </span>
+    );
+  }
+  if (role === "education-evaluator") {
+    return (
+      <span className="rounded-full p-1.5 agent-b-bg agent-b-text">
+        <GraduationCap className="h-4 w-4" />
+      </span>
+    );
+  }
+  // consensus-moderator
+  return (
+    <span className="rounded-full p-1.5 agent-consensus-bg agent-consensus-text">
+      <Scale className="h-4 w-4" />
+    </span>
+  );
 }
 
 /** ISO 타임스탬프를 HH:mm 형식으로 변환 */
@@ -148,13 +173,15 @@ function MessageBubble({
           alignment === "right" && "items-end",
         )}
       >
-        {/* 에이전트 이름 + 역할 뱃지 */}
+        {/* 에이전트 이름 + 아바타 아이콘 + 역할 뱃지 */}
         <div
           className={cn(
             "flex items-center gap-2",
             alignment === "right" && "flex-row-reverse",
           )}
         >
+          {/* 에이전트 아바타 아이콘 */}
+          <AgentAvatar role={message.role} />
           <span className="text-xs font-semibold text-foreground">
             {message.agent}
           </span>
@@ -298,7 +325,7 @@ export function DebateLog({ debateRounds, debateLog }: DebateLogProps) {
             <AccordionItem
               key={phase}
               value={`phase-${phase}`}
-              className="rounded-lg border px-2 mb-2 last:mb-0"
+              className="rounded-lg border px-2 mb-2 last:mb-0 animate-fade-in"
             >
               <AccordionTrigger className="py-3 hover:no-underline">
                 <div className="flex items-center gap-2">

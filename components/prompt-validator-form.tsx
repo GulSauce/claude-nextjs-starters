@@ -8,6 +8,13 @@ import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -76,71 +83,96 @@ export function PromptValidatorForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* 대상 모델 선택 */}
-        <FormField
-          control={form.control}
-          name="targetModel"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>대상 AI 모델</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="모델을 선택하세요" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {TARGET_MODELS.map((model) => (
-                    <SelectItem key={model} value={model}>
-                      {modelLabels[model]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    /* 폼 전체를 Card로 감싸 시각적 구분 제공 */
+    <Card>
+      <CardHeader>
+        <CardTitle>프롬프트 입력</CardTitle>
+        <CardDescription>
+          검증할 AI 퀴즈 생성용 메타프롬프트를 입력하세요
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* 대상 모델 선택 */}
+            <FormField
+              control={form.control}
+              name="targetModel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>대상 AI 모델</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="모델을 선택하세요" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {TARGET_MODELS.map((model) => (
+                        <SelectItem key={model} value={model}>
+                          {modelLabels[model]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        {/* 메타프롬프트 입력 */}
-        <FormField
-          control={form.control}
-          name="promptText"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>메타프롬프트</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="퀴즈 생성용 메타프롬프트를 입력하세요..."
-                  className="min-h-[240px]"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription className="flex justify-between">
-                <span>최소 50자 이상 입력해주세요</span>
-                <span className={charCount < 50 ? "text-destructive" : ""}>
-                  {charCount}자
-                </span>
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            {/* 메타프롬프트 입력 */}
+            <FormField
+              control={form.control}
+              name="promptText"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>메타프롬프트</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="퀴즈 생성용 메타프롬프트를 입력하세요..."
+                      className="min-h-[240px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="flex justify-between">
+                    <span>최소 50자 이상 입력해주세요</span>
+                    {/* 50자 미만: 빨간색 경고, 이상: 기본 muted 색상 */}
+                    <span
+                      className={
+                        charCount < 50
+                          ? "text-destructive"
+                          : "text-muted-foreground"
+                      }
+                    >
+                      {charCount}자
+                    </span>
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        {/* 제출 버튼 */}
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              제출 중...
-            </>
-          ) : (
-            "검증 요청 제출"
-          )}
-        </Button>
-      </form>
-    </Form>
+            {/* 제출 버튼 — hover 시 shadow 강조 */}
+            <Button
+              type="submit"
+              className="w-full transition-all hover:shadow-md"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  제출 중...
+                </>
+              ) : (
+                "검증 요청 제출"
+              )}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }

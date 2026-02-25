@@ -1,10 +1,7 @@
-import { Separator } from "@/components/ui/separator";
-
 export function Footer() {
   return (
     <footer className="border-t">
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <Separator className="mb-6" />
+      <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6">
         <div className="text-muted-foreground flex flex-col items-center justify-between gap-2 text-sm sm:flex-row">
           <p>&copy; {new Date().getFullYear()} 퀴즈 프롬프트 검증기</p>
           <p>

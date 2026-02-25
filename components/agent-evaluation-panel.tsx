@@ -1,4 +1,5 @@
 // 두 에이전트(Agent A / Agent B)의 개별 평가 결과를 나란히 보여주는 패널 컴포넌트
+import { Code2, GraduationCap, Scale } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { AgentEvaluation, AgentRole, CriterionId } from "@/lib/types";
@@ -16,11 +17,30 @@ const agentRoleLabelMap: Record<AgentRole, string> = {
   "consensus-moderator": "합의 중재자",
 };
 
-/** 에이전트 역할별 카드 테두리 색상 */
+/** 에이전트 역할별 카드 테두리 색상 (CSS 변수 기반 시맨틱 클래스) */
 const agentRoleBorderMap: Record<AgentRole, string> = {
-  "prompt-engineer": "border-blue-200 dark:border-blue-800",
-  "education-evaluator": "border-purple-200 dark:border-purple-800",
-  "consensus-moderator": "border-gray-200 dark:border-gray-700",
+  "prompt-engineer": "agent-a-border",
+  "education-evaluator": "agent-b-border",
+  "consensus-moderator": "agent-consensus-border",
+};
+
+/** 에이전트 역할별 아바타 아이콘 */
+const agentRoleIconMap: Record<AgentRole, React.ReactNode> = {
+  "prompt-engineer": (
+    <span className="rounded-full p-2 agent-a-bg agent-a-text">
+      <Code2 className="h-5 w-5" />
+    </span>
+  ),
+  "education-evaluator": (
+    <span className="rounded-full p-2 agent-b-bg agent-b-text">
+      <GraduationCap className="h-5 w-5" />
+    </span>
+  ),
+  "consensus-moderator": (
+    <span className="rounded-full p-2 agent-consensus-bg agent-consensus-text">
+      <Scale className="h-5 w-5" />
+    </span>
+  ),
 };
 
 /**
@@ -91,10 +111,14 @@ function AgentEvaluationColumn({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* 에이전트 헤더 카드: 역할 이름 + 총점 + 등급 뱃지 */}
+      {/* 에이전트 헤더 카드: 아바타 아이콘 + 역할 이름 + 총점 + 등급 뱃지 */}
       <Card className={cn("border-2", borderClass)}>
         <CardHeader className="flex flex-row items-center justify-between gap-2">
-          <CardTitle className="text-base">{roleLabel}</CardTitle>
+          {/* 아바타 아이콘 + 역할 라벨 */}
+          <div className="flex items-center gap-2">
+            {agentRoleIconMap[evaluation.agentRole]}
+            <CardTitle className="text-base">{roleLabel}</CardTitle>
+          </div>
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm font-medium">
               {evaluation.totalScore}점

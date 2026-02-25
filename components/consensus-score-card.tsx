@@ -43,22 +43,24 @@ export function ConsensusScoreCard({
     (e) => e.agentRole === "education-evaluator",
   );
 
-  // 수평 바 차트 데이터 구성
+  // 수평 바 차트 데이터 구성 — CSS 변수 기반 인라인 스타일 사용
   const barChartItems = [
     {
       label: agentRoleLabel["prompt-engineer"],
       score: agentA?.totalScore ?? 0,
-      colorClass: "bg-blue-500",
+      barStyle: { backgroundColor: "var(--agent-a)" } as React.CSSProperties,
     },
     {
       label: agentRoleLabel["education-evaluator"],
       score: agentB?.totalScore ?? 0,
-      colorClass: "bg-purple-500",
+      barStyle: { backgroundColor: "var(--agent-b)" } as React.CSSProperties,
     },
     {
       label: "합의",
       score: totalScore,
-      colorClass: "bg-green-500",
+      barStyle: {
+        backgroundColor: "var(--agent-consensus)",
+      } as React.CSSProperties,
     },
   ];
 
@@ -102,20 +104,27 @@ export function ConsensusScoreCard({
               <span className="text-muted-foreground w-36 shrink-0 text-right text-sm">
                 {item.label}
               </span>
-              {/* 바 트랙 */}
-              <div className="bg-muted h-5 flex-1 overflow-hidden rounded-full">
+              {/* 바 트랙 — relative로 내부 레이블 포지셔닝 */}
+              <div className="bg-muted relative h-7 flex-1 overflow-hidden rounded-full">
                 <div
-                  className={cn(
-                    "h-full rounded-full transition-all duration-500",
-                    item.colorClass,
-                  )}
-                  style={{ width: `${item.score}%` }}
+                  className="animate-bar-grow h-full rounded-full transition-all duration-500"
+                  style={{
+                    width: `${item.score}%`,
+                    ...item.barStyle,
+                  }}
                   role="progressbar"
                   aria-valuenow={item.score}
                   aria-valuemin={0}
                   aria-valuemax={100}
                   aria-label={`${item.label} 점수 ${item.score}점`}
-                />
+                >
+                  {/* 점수 15 이상일 때만 바 내부에 점수 표시 */}
+                  {item.score >= 15 && (
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-white">
+                      {item.score}
+                    </span>
+                  )}
+                </div>
               </div>
               {/* 점수 */}
               <span className="w-14 shrink-0 text-sm font-semibold tabular-nums">
@@ -146,19 +155,31 @@ export function ConsensusScoreCard({
                   </th>
                   <th className="text-muted-foreground px-3 py-2 text-center font-medium">
                     <span className="inline-flex items-center gap-1.5">
-                      <span className="inline-block h-2.5 w-2.5 rounded-full bg-blue-500" />
+                      {/* Agent A 색상 dot — CSS 변수 사용 */}
+                      <span
+                        className="inline-block h-2.5 w-2.5 rounded-full"
+                        style={{ backgroundColor: "var(--agent-a)" }}
+                      />
                       Agent A
                     </span>
                   </th>
                   <th className="text-muted-foreground px-3 py-2 text-center font-medium">
                     <span className="inline-flex items-center gap-1.5">
-                      <span className="inline-block h-2.5 w-2.5 rounded-full bg-purple-500" />
+                      {/* Agent B 색상 dot — CSS 변수 사용 */}
+                      <span
+                        className="inline-block h-2.5 w-2.5 rounded-full"
+                        style={{ backgroundColor: "var(--agent-b)" }}
+                      />
                       Agent B
                     </span>
                   </th>
                   <th className="text-muted-foreground px-3 py-2 text-center font-medium">
                     <span className="inline-flex items-center gap-1.5">
-                      <span className="inline-block h-2.5 w-2.5 rounded-full bg-green-500" />
+                      {/* 합의 색상 dot — CSS 변수 사용 */}
+                      <span
+                        className="inline-block h-2.5 w-2.5 rounded-full"
+                        style={{ backgroundColor: "var(--agent-consensus)" }}
+                      />
                       합의
                     </span>
                   </th>
@@ -190,7 +211,10 @@ export function ConsensusScoreCard({
                     diffAConsensus >= 3 || diffBConsensus >= 3;
 
                   return (
-                    <tr key={consensus.criterionId}>
+                    <tr
+                      key={consensus.criterionId}
+                      className="hover:bg-muted/50 transition-colors"
+                    >
                       {/* 항목명 */}
                       <td className="py-2.5 pr-4 font-medium">
                         {consensus.criterionName}

@@ -14,7 +14,7 @@ export default async function ResultPage({
   const prompt = await getPrompt(id);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
       <div className="space-y-4">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           검증 결과

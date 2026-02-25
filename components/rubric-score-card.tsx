@@ -44,7 +44,7 @@ export function RubricScoreCard({
         <div className="bg-muted h-2 overflow-hidden rounded-full">
           <div
             className={cn(
-              "h-full rounded-full transition-all",
+              "h-full rounded-full transition-all duration-700 ease-out",
               ratio >= 0.8
                 ? "bg-green-500"
                 : ratio >= 0.6
