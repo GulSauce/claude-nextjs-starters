@@ -4,8 +4,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 > 제품 요구사항(기능 명세, 데이터 모델, 루브릭 기준)은 `docs/PRD.md` 참조.
 > 개발 계획(Phase/Task, 진행 상태)은 `docs/roadmaps/ROADMAP_v*.md` 참조 (`[COMP]` 접두사 없는 파일이 활성).
-> AI 행동 규칙(금지 사항, 컨벤션, 에이전트, 워크플로우)은 `.claude/rules/` 디렉토리 참조 (자동 로드).
-> 문서 간 의존 관계 및 갱신 트리거는 `.claude/rules/document-sync.md` 참조.
 
 ## 프로젝트 개요
 
