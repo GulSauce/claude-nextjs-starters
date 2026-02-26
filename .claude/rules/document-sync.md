@@ -19,7 +19,6 @@ globs: ["**/*"]
 | `.claude/rules/task-workflow.md`      | 작업 실행 규칙, 우선순위                   |
 | `.claude/rules/agent-delegation.md`   | 전용 에이전트 사용 규칙                    |
 | `.claude/rules/document-sync.md`      | 문서 연동/갱신 트리거 (이 파일)            |
-| `.claude/rules/plan-mode.md`          | Plan 모드 행동 규칙                        |
 
 ### 필요 시 읽기 (명시적 Read 필요)
 
@@ -32,15 +31,18 @@ globs: ["**/*"]
 ### 의존 관계
 
 ```
-CLAUDE.md (기술 스택, 아키텍처)
-  ← docs/PRD.md (기능 명세 → 아키텍처에 반영)
-  ← docs/roadmaps/ (작업 계획 → 현재 상태에 반영)
+CLAUDE.md (기술 스택, 아키텍처) ← 자동 로드
+  ↑ docs/PRD.md (기능 변경 → 아키텍처에 반영)
+  ↑ docs/roadmaps/ (작업 계획)
 
-.claude/rules/ (AI 행동 규칙)
-  → shrimp-rules.md (포인터로 참조)
+.claude/rules/ (AI 행동 규칙) ← 자동 로드
+  → shrimp-rules.md (순수 포인터, 규칙 내용 없음)
 
 docs/PRD.md (기능 명세, 데이터 모델)
-  ← lib/types.ts, lib/rubrics.ts (코드가 진실, 문서에 동기화)
+  ↑ lib/types.ts, lib/rubrics.ts (코드가 진실 → 문서에 동기화)
+
+constraints.md (금지 사항) ← 유일한 원천
+  ← coding-conventions.md (참조만, 중복 기재 금지)
 ```
 
 ## 변경 → 문서 갱신 트리거
