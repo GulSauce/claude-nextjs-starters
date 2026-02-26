@@ -11,8 +11,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 AI 메타프롬프트의 품질을 로컬에서 자동 평가하여 점수와 개선안을 제공하는 도구 (로컬 전용, 1인 개발자 대상).
 
-**현재 상태**: Phase 6 구현 완료. 듀얼 에이전트 토론 기반 평가 시스템 (프롬프트 엔지니어 + 교육 평가 전문가 → 교차 검토 → 개선 프롬프트 교차 검토 → 합의 도출) 동작.
-
 ## 기술 스택
 
 - **프레임워크**: Next.js 16 (App Router, RSC 기본)
@@ -25,6 +23,7 @@ AI 메타프롬프트의 품질을 로컬에서 자동 평가하여 점수와 �
 - **폼**: React Hook Form 7.x + Zod + @hookform/resolvers
 - **데이터 저장**: 로컬 JSON 파일 (Node.js fs, `data/` 디렉토리)
 - **린트**: ESLint 9 (eslint-config-next)
+- **마크다운 렌더링**: react-markdown + @tailwindcss/typography
 - **포맷팅**: Prettier
 
 ## 명령어 (Scripts)
@@ -90,6 +89,7 @@ components/
   score-badge.tsx               # 등급 뱃지
   rubric-score-card.tsx         # 루브릭 점수 카드 (compact 모드 지원)
   history-card.tsx              # 히스토리 카드 (evaluationMode 뱃지)
+  markdown-renderer.tsx          # 마크다운 렌더링 공통 컴포넌트
   consensus-score-card.tsx      # 합의 결과 카드 (debate 모드)
   debate-log.tsx                # 토론 로그 채팅 UI (debate 모드)
   agent-evaluation-panel.tsx    # 에이전트별 평가 패널 (debate 모드)
