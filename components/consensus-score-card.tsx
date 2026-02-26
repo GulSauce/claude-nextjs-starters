@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { ScoreBadge } from "@/components/score-badge";
 import { cn } from "@/lib/utils";
+import { MarkdownRenderer } from "@/components/markdown-renderer";
 import type { Grade, RubricScore, AgentEvaluation } from "@/lib/types";
 
 // 에이전트 역할 한국어 라벨
@@ -268,9 +269,7 @@ export function ConsensusScoreCard({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">
-            {consensusSummary}
-          </p>
+          <MarkdownRenderer content={consensusSummary} />
         </CardContent>
       </Card>
     </div>

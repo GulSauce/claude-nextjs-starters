@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { MarkdownRenderer } from "@/components/markdown-renderer";
 import { Code2, GraduationCap, Scale } from "lucide-react";
 import type {
   AgentRole,
@@ -207,9 +208,17 @@ function MessageBubble({
             alignment === "center" && "rounded-xl",
           )}
         >
-          <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-            {displayContent}
-          </p>
+          {/* 축약 상태에서는 plain text, 전체 표시에서는 마크다운 렌더링 */}
+          {isLong && !isExpanded ? (
+            <p className="text-sm leading-relaxed text-foreground">
+              {displayContent}
+            </p>
+          ) : (
+            <MarkdownRenderer
+              content={displayContent}
+              className="text-foreground"
+            />
+          )}
 
           {/* 더 보기 / 접기 토글 버튼 */}
           {isLong && (
@@ -219,7 +228,6 @@ function MessageBubble({
               className="mt-1 h-auto px-0 py-0.5 text-xs text-muted-foreground hover:text-foreground"
               onClick={() => onToggleExpand(messageKey)}
             >
-              {/* TODO: 클릭 시 토글 로직 구현 - 상위 컴포넌트에서 onToggleExpand 호출 */}
               {isExpanded ? "접기" : "더 보기"}
             </Button>
           )}

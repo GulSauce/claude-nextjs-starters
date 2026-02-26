@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -6,6 +8,7 @@ import {
   CardAction,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { MarkdownRenderer } from "@/components/markdown-renderer";
 import type { RubricScore } from "@/lib/types";
 
 interface RubricScoreCardProps {
@@ -63,7 +66,7 @@ export function RubricScoreCard({
               <p className="text-muted-foreground text-sm font-medium">
                 피드백
               </p>
-              <p className="text-sm">{rubricScore.feedback}</p>
+              <MarkdownRenderer content={rubricScore.feedback} />
             </div>
 
             {/* 개선 제안 */}
@@ -71,7 +74,7 @@ export function RubricScoreCard({
               <p className="text-muted-foreground text-sm font-medium">
                 개선 제안
               </p>
-              <p className="text-sm">{rubricScore.suggestion}</p>
+              <MarkdownRenderer content={rubricScore.suggestion} />
             </div>
           </>
         )}

@@ -1,3 +1,5 @@
+"use client";
+
 // 두 에이전트(Agent A / Agent B)의 개별 평가 결과를 나란히 보여주는 패널 컴포넌트
 import { Code2, GraduationCap, Scale } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,6 +7,7 @@ import { cn } from "@/lib/utils";
 import type { AgentEvaluation, AgentRole, CriterionId } from "@/lib/types";
 import { ScoreBadge } from "@/components/score-badge";
 import { RubricScoreCard } from "@/components/rubric-score-card";
+import { MarkdownRenderer } from "@/components/markdown-renderer";
 
 interface AgentEvaluationPanelProps {
   agentEvaluations: AgentEvaluation[];
@@ -146,9 +149,10 @@ function AgentEvaluationColumn({
           <CardTitle className="text-sm">종합 피드백</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground text-sm">
-            {evaluation.overallFeedback}
-          </p>
+          <MarkdownRenderer
+            content={evaluation.overallFeedback}
+            className="text-muted-foreground"
+          />
         </CardContent>
       </Card>
     </div>

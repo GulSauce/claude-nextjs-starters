@@ -16,6 +16,7 @@ import {
   FileText,
   ClipboardCheck,
 } from "lucide-react";
+import { MarkdownRenderer } from "@/components/markdown-renderer";
 import type { ValidationResult as ValidationResultType } from "@/lib/types";
 import type { Grade } from "@/lib/types";
 
@@ -100,7 +101,11 @@ export function ValidationResult({
             )}
           </div>
         </div>
-        <p className="text-muted-foreground">{result.overallFeedback}</p>
+        <MarkdownRenderer
+          content={result.overallFeedback}
+          size="base"
+          className="text-muted-foreground"
+        />
       </div>
 
       {/* 탭 UI: debate 모드 5탭 / single 모드 3탭 */}
