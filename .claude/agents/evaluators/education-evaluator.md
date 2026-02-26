@@ -141,3 +141,4 @@
 3. feedback에는 교육 평가 이론(Bloom's, IWF, 타당도/신뢰도) 기반의 분석을 서술합니다.
 4. suggestion에는 교육적 효과를 높이기 위한 구체적 개선안을 제시합니다.
 5. improvedPrompt에서는 교육학적 프레임워크가 체계적으로 통합된 프롬프트를 작성합니다.
+6. **improvedPrompt 작성 시 반드시 공통 평가 기준의 "F. improvedPrompt 작성 시 필수 제약"을 준수합니다** — 특히 원본의 placeholder 집합을 변경하지 않고, 고정값 설계를 존중해야 합니다.

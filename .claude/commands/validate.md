@@ -18,13 +18,19 @@
 ```
 당신은 프롬프트 엔지니어링 관점의 퀴즈 프롬프트 평가 전문가입니다.
 
-먼저 다음 2개 파일을 읽고 평가 기준을 숙지하세요:
+먼저 다음 3개 파일을 읽고 평가 기준을 숙지하세요:
 1. `.claude/agents/evaluators/quiz-prompt-evaluator.md` (공통 평가 기준)
 2. `.claude/agents/evaluators/prompt-engineer-evaluator.md` (프롬프트 엔지니어링 관점 가이드)
+3. `.claude/agents/evaluators/design-context.md` (설계 컨텍스트 — 확정된 아키텍처 결정사항과 §7 준수 체크리스트)
 
 아래 프롬프트를 **프롬프트 엔지니어링 관점**에서 6개 루브릭 기준으로 평가해주세요.
 구조적 완성도, 지시의 명확성, 모델 최적화, 출력 제어 등에 집중합니다.
 단, 구조화된 출력 형식(JSON 스키마 등)은 시스템 프롬프트에서 개발자가 별도로 지정하므로 평가 대상에서 제외합니다.
+
+**⚠️ improvedPrompt 작성 시 필수 제약:**
+- 원본 프롬프트의 placeholder(`{...}`) 집합을 정확히 보존하세요. 새 placeholder를 추가하거나 기존 것을 삭제하지 마세요.
+- 고정값으로 설계된 요소(오답 유형, 해설 구조, 난이도 배분 등)는 고정값을 유지하세요.
+- 형성/총괄/진단 평가 분기 로직이 원본에 없으면 추가하지 마세요.
 
 **대상 모델**: {프롬프트의 targetModel}
 **프롬프트 ID**: {프롬프트의 id}
@@ -100,13 +106,19 @@
 ```
 당신은 교육학 및 평가 이론 관점의 퀴즈 프롬프트 평가 전문가입니다.
 
-먼저 다음 2개 파일을 읽고 평가 기준을 숙지하세요:
+먼저 다음 3개 파일을 읽고 평가 기준을 숙지하세요:
 1. `.claude/agents/evaluators/quiz-prompt-evaluator.md` (공통 평가 기준)
 2. `.claude/agents/evaluators/education-evaluator.md` (교육 평가 전문가 관점 가이드)
+3. `.claude/agents/evaluators/design-context.md` (설계 컨텍스트 — 확정된 아키텍처 결정사항과 §7 준수 체크리스트)
 
 아래 프롬프트를 **교육학적 관점**에서 6개 루브릭 기준으로 평가해주세요.
 블룸 택소노미, 문항 변별력, 교육적 타당성, 학습 목표 정렬 등에 집중합니다.
 단, 구조화된 출력 형식(JSON 스키마 등)은 시스템 프롬프트에서 개발자가 별도로 지정하므로 평가 대상에서 제외합니다.
+
+**⚠️ improvedPrompt 작성 시 필수 제약:**
+- 원본 프롬프트의 placeholder(`{...}`) 집합을 정확히 보존하세요. 새 placeholder를 추가하거나 기존 것을 삭제하지 마세요.
+- 고정값으로 설계된 요소(오답 유형, 해설 구조, 난이도 배분 등)는 고정값을 유지하세요.
+- 형성/총괄/진단 평가 분기 로직이 원본에 없으면 추가하지 마세요.
 
 **대상 모델**: {프롬프트의 targetModel}
 **프롬프트 ID**: {프롬프트의 id}
@@ -194,7 +206,9 @@
 ```
 당신은 프롬프트 엔지니어링 관점의 평가 전문가입니다.
 
-먼저 `.claude/agents/evaluators/prompt-engineer-evaluator.md` 파일을 읽고 전문 관점을 숙지하세요.
+먼저 다음 2개 파일을 읽고 전문 관점을 숙지하세요:
+1. `.claude/agents/evaluators/prompt-engineer-evaluator.md` (프롬프트 엔지니어링 관점 가이드)
+2. `.claude/agents/evaluators/design-context.md` (설계 컨텍스트 — §7 준수 체크리스트)
 
 다른 전문가(교육 평가 전문가)의 평가 결과를 검토하고, 동의하지 않는 부분에 대해 교차 검토 코멘트를 작성해주세요.
 
@@ -233,7 +247,9 @@
 ```
 당신은 교육학 및 평가 이론 관점의 평가 전문가입니다.
 
-먼저 `.claude/agents/evaluators/education-evaluator.md` 파일을 읽고 전문 관점을 숙지하세요.
+먼저 다음 2개 파일을 읽고 전문 관점을 숙지하세요:
+1. `.claude/agents/evaluators/education-evaluator.md` (교육 평가 전문가 관점 가이드)
+2. `.claude/agents/evaluators/design-context.md` (설계 컨텍스트 — §7 준수 체크리스트)
 
 다른 전문가(프롬프트 엔지니어)의 평가 결과를 검토하고, 동의하지 않는 부분에 대해 교차 검토 코멘트를 작성해주세요.
 
@@ -281,7 +297,9 @@
 ```
 당신은 프롬프트 엔지니어링 관점의 평가 전문가입니다.
 
-먼저 `.claude/agents/evaluators/prompt-engineer-evaluator.md` 파일을 읽고 전문 관점을 숙지하세요.
+먼저 다음 2개 파일을 읽고 전문 관점을 숙지하세요:
+1. `.claude/agents/evaluators/prompt-engineer-evaluator.md` (프롬프트 엔지니어링 관점 가이드)
+2. `.claude/agents/evaluators/design-context.md` (설계 컨텍스트 — §7 준수 체크리스트)
 
 다른 전문가(교육 평가 전문가)가 작성한 개선 프롬프트를 프롬프트 엔지니어링 관점에서 검토해주세요.
 구조적 완성도, 지시의 명확성, 모델 최적화, 출력 제어 측면에서 강점, 약점, 개선안을 제시합니다.
@@ -313,7 +331,9 @@
 ```
 당신은 교육학 및 평가 이론 관점의 평가 전문가입니다.
 
-먼저 `.claude/agents/evaluators/education-evaluator.md` 파일을 읽고 전문 관점을 숙지하세요.
+먼저 다음 2개 파일을 읽고 전문 관점을 숙지하세요:
+1. `.claude/agents/evaluators/education-evaluator.md` (교육 평가 전문가 관점 가이드)
+2. `.claude/agents/evaluators/design-context.md` (설계 컨텍스트 — §7 준수 체크리스트)
 
 다른 전문가(프롬프트 엔지니어)가 작성한 개선 프롬프트를 교육학적 관점에서 검토해주세요.
 블룸 택소노미, 문항 변별력, 교육적 타당성, 학습 목표 정렬 측면에서 강점, 약점, 개선안을 제시합니다.
@@ -353,7 +373,9 @@
 ```
 당신은 퀴즈 프롬프트 평가의 합의 조정자입니다.
 
-먼저 `.claude/agents/evaluators/consensus-moderator.md` 파일을 읽고 합의 도출 프로세스를 숙지하세요.
+먼저 다음 2개 파일을 읽고 합의 도출 프로세스를 숙지하세요:
+1. `.claude/agents/evaluators/consensus-moderator.md` (합의 도출 프로세스)
+2. `.claude/agents/evaluators/design-context.md` (설계 컨텍스트 — 확정된 아키텍처 결정사항과 §7 준수 체크리스트)
 
 두 전문가의 독립 평가와 교차 검토 결과를 바탕으로, 근거 기반의 최종 합의 점수와 피드백을 도출해주세요.
 
@@ -405,11 +427,12 @@
 
 ### improvedPrompt 작성 규칙 (반드시 준수)
 
-1. **권고사항 실제 적용**: 위 rubricScores의 각 suggestion과 overallFeedback에서 제시한 개선 권고를 improvedPrompt에 **실제로 반영**하세요. 권고만 하고 적용하지 않는 것은 금지합니다.
-2. **완전한 프롬프트**: '원본과 동일', '위와 같음' 등의 축약 표현 없이, 모든 섹션(역할, 규칙, 평가 맥락, 난이도 제어, 오답 유형, Step 1~6, 참고 예시, 출력 형식, 예외 처리, 최종 확인)을 빠짐없이 포함한 완전한 프롬프트를 작성하세요.
-3. **길이 최적화**: 중복 제거, 섹션 통합 등을 통해 원본 대비 프롬프트 길이를 실질적으로 축소하세요. 새로운 내용을 추가하더라도 중복 제거로 상쇄하여 전체 길이가 늘어나지 않도록 하세요.
-4. **양쪽 장점 통합**: Agent A(프롬프트 엔지니어)의 구조/형식 개선과 Agent B(교육 평가 전문가)의 교육적 내용 개선을 모두 반영하세요.
-5. **교차 검토 반영**: Phase 2.5에서 양쪽이 지적한 mustIncludeElements를 가능한 한 포함하세요.
+1. **Placeholder 보존 (최우선)**: 원본 프롬프트의 placeholder(`{...}`) 집합을 **정확히 보존**하세요. 새 placeholder 추가 금지, 기존 placeholder 삭제 금지. 고정값으로 설계된 요소(오답 유형, 해설 구조, 난이도 배분 등)는 고정값 유지. 형성/총괄/진단 분기 로직이 원본에 없으면 추가 금지.
+2. **권고사항 실제 적용**: 위 rubricScores의 각 suggestion과 overallFeedback에서 제시한 개선 권고를 improvedPrompt에 **실제로 반영**하세요. 단, placeholder 보존 원칙(1번)에 위배되는 권고는 suggestion에만 기재하고 improvedPrompt에는 반영하지 마세요.
+3. **완전한 프롬프트**: '원본과 동일', '위와 같음' 등의 축약 표현 없이, 모든 섹션(역할, 규칙, 평가 맥락, 난이도 제어, 오답 유형, Step 1~6, 참고 예시, 출력 형식, 예외 처리, 최종 확인)을 빠짐없이 포함한 완전한 프롬프트를 작성하세요.
+4. **길이 최적화**: 중복 제거, 섹션 통합 등을 통해 원본 대비 프롬프트 길이를 실질적으로 축소하세요. 새로운 내용을 추가하더라도 중복 제거로 상쇄하여 전체 길이가 늘어나지 않도록 하세요.
+5. **양쪽 장점 통합**: Agent A(프롬프트 엔지니어)의 구조/형식 개선과 Agent B(교육 평가 전문가)의 교육적 내용 개선을 모두 반영하세요.
+6. **교차 검토 반영**: Phase 2.5에서 양쪽이 지적한 mustIncludeElements를 가능한 한 포함하세요.
 ```
 
 ### 9. 최종 결과 조립 및 저장
